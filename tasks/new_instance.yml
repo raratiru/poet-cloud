@@ -1,0 +1,93 @@
+---
+- name: Update and upgrade the OS
+  block:
+    - name: Update System
+      apt:
+        update_cache: yes
+    - name: Upgrade System
+      apt:
+        upgrade: full
+    - name: Dist-Upgrade System
+      apt:
+        upgrade: dist
+    - name: Remove useless packages from the cache
+      apt:
+        autoclean: yes
+    - name: Remove dependencies that are no longer required
+      apt:
+        autoremove: yes
+    - name: Install haveged
+      apt:
+        name: "haveged"
+        state: present
+  become: True
+
+- name: Set root password
+  user:
+    name: root
+    password: "{{ ansible_become_password | password_hash('sha512', password_salt) }}"
+
+- name: Ensure group "wheel" exists
+  group:
+    name: wheel
+    state: present
+
+- name: "Ensure group {{ managing_user }} exists"
+  group:
+    name: "{{ managing_user }}"
+    state: present
+
+- name: "Create {{ managing_user }}"
+  user:
+    name: "{{ managing_user }}"
+    group: "{{ managing_user }}"
+    shell: /bin/bash
+    password: "{{ managing_user_password | password_hash('sha512', password_salt) }}"
+    create_home: yes
+    groups: wheel
+    append: yes
+    update_password: on_create
+
+- name: "Copy the .ssh dir for {{ managing_user }}"
+  become: True
+  delegate_to: "{{ inventory_hostname }}"
+  synchronize:
+    src: "/root/.ssh/"
+    dest: "/home/{{ managing_user }}/.ssh/"
+  when: ansible_ssh_user == 'root'
+
+- name: Enable pam su authentication
+  become: True
+  lineinfile:
+    dest: "/etc/pam.d/su"
+    regexp: "auth *required *pam_wheel.so$"
+    line: "auth       required   pam_wheel.so"
+    state: present
+
+- name: "Recursively change ownership of .ssh for {{ managing_user }}"
+  become: True
+  file:
+    path: "/home/{{ managing_user }}/.ssh"
+    state: directory
+    recurse: yes
+    owner: "{{ managing_user }}"
+    group: "{{ managing_user }}"
+
+- name: "Harden the system"
+  become: True
+  import_role:
+    name: devsec.hardening.os_hardening
+  vars:
+    # To avoid kernel panic
+    os_filesystem_whitelist: ["vfat", "squashfs"]
+    # To avoid disabling su
+    os_security_users_allow: ["change_user"]
+    os_auth_pw_max_age: 99999
+    # No ufw, tnanx
+    ufw_manage_defaults: False
+    sysctl_overwrite:
+      # Enable IPv4 traffic forwarding for docker.
+      net.ipv4.ip_forward: 1
+      # Enable ipv6, ()Avoid RTNETLINK answers: Permission denied)
+      net.ipv6.conf.all.disable_ipv6: 0
+      net.ipv6.conf.all.forwarding: 1

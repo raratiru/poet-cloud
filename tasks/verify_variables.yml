@@ -1,0 +1,4 @@
+---
+- name: "Stop when environment variables are undefined"
+  meta: end_play
+  when: ansible_become_password == "" or password_salt == "" or managing_user_password == ""

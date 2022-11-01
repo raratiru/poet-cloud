@@ -1,0 +1,7 @@
+---
+- import_tasks: verify_variables.yml
+  tags: [always]
+
+- import_tasks: new_instance.yml
+  tags: [never, new_instance]
+  when: ansible_ssh_user == 'root'
