@@ -1,0 +1,87 @@
+---
+- name: copy monitoring tools
+  become: True
+  copy:
+    src: "{{ item.source }}"
+    dest: "/usr/local/bin/{{ item.destination }}"
+    owner: root
+    group: bin
+    mode: 0710
+  with_items:
+    - { source: debian_memory_check, destination: memory_check }
+    - { source: debian_memory_stats, destination: memory_stats }
+
+- name: copy check_services BUT DO NOT REPLACE IF IT EXISTS
+  become: True
+  copy:
+    src: debian_check_services
+    dest: /usr/local/bin/check_services
+    owner: root
+    group: bin
+    mode: 0710
+    force: no  # Do not override if it exists because other playbooks may have changed it
+
+- name: copy necessary templates
+  template:
+    src: "{{ item.source }}"
+    dest: "{{ item.destination }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+  become: True
+  with_items:
+    - { source: rkhunter.j2, destination: /usr/local/bin/rkhunter, owner: root, group: bin, mode: "0710"}
+    - { source: chkrootkit.j2, destination: /usr/local/bin/chkrootkit, owner: root, group: bin, mode: "0710"}
+    - { source: debian_hourly_mail.j2, destination: /usr/local/bin/hourly_mail, owner: root, group: bin, mode: "0710"}
+    # - { source: send_mail.j2, destination: /usr/local/bin/send_mail, owner: root, group: bin, mode: "0710"}
+
+- name: Copy logrotate configuration
+  become: True
+  copy:
+    src: logrotate_reports
+    dest: /etc/logrotate.d/reports
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Check Memory Cron Job
+  become: True
+  cron:
+    name: "check memory"
+    minute: "*/3"
+    job: "/usr/local/bin/memory_check"
+
+- name: Check Services Cron Job
+  become: True
+  cron:
+    name: "check services"
+    minute: "*/5"
+    job: "/usr/local/bin/check_services"
+
+- name: Check the hourly mail system Cron Job
+  become: True
+  cron:
+    name: "check for every hour email"
+    special_time: hourly
+    job: "/usr/local/bin/hourly_mail"
+
+- name: Daily rkunter
+  become: True
+  cron:
+    name: "Run rkhunter"
+    special_time: daily
+    job: "/usr/local/bin/rkhunter"
+
+- name: Daily chkrootkit
+  become: True
+  cron:
+    name: "Run chkrootkit"
+    special_time: daily
+    job: "/usr/local/bin/chkrootkit"
+
+- name: Daily Database Backup
+  become: True
+  cron:
+    name: "Perform Database Backup"
+    special_time: daily
+    job: '/usr/local/bin/backup_database || echo "Subject:The database backup has failed" | /usr/sbin/sendmail -F "Charlie Root" {{ admin_email }}'

@@ -1,0 +1,53 @@
+#!/bin/ksh
+
+echo '*******************************'
+/bin/date
+echo '*******************************'
+
+function memory_share
+{
+mem=0
+memv=0
+echo "PHY - VIR"
+while read -r rss vsz comm
+do mbs=$((rss/1024))
+mbsv=$((vsz/1024))
+mem=$((mbs + mem))
+memv=$((mbsv + memv))
+echo $mbs"MB - "$mbsv"MB - $comm"
+done <<EOF
+$(ps -ax -o rss=,vsz=,comm= -U $1)
+EOF
+echo "------------------------------------"
+echo $mem"MB - "$memv"MB for user $1"
+echo " "
+}
+
+echo "**************************************"
+memory_share www
+memory_share _postgresql
+echo "**************************************"
+echo ' '
+echo '***All processes***:'
+top -o res -d 1
+echo ' '
+echo '***Exclude idle processes***:'
+echo ' '
+top -I -o res -d 1
+echo ' '
+echo '***Vmstat:'
+echo ' '
+vmstat
+echo ' '
+echo '***Netstat:'
+echo ' '
+netstat -na -f inet | grep -E 'LISTEN' | grep -v 127.0.0.1
+echo ' '
+echo 'You may also run:'
+echo 'netstat -na -f inet | grep ESTABLISHED'
+echo 'systat vmstat'
+echo 'systat malloc'
+echo 'systat iostat'
+echo 'systat pf'
+echo 'systat netstat'
+echo 'vmstat -m'

@@ -1,0 +1,19 @@
+#!/bin/ksh
+
+# Sets the desired lowest level of memory in MB
+# Converts it to pages
+# Checks if the current free pages are lower
+# If they are, a report is issued
+# awk removes the extra whitespace from everywhere
+# cut selects the column based on white space
+
+min_MB_level=150
+
+page_size=$(vmstat -s | grep 'bytes per page$' | awk '{$1=$1;print}' | cut -d ' ' -f1)
+free_pages=$(vmstat -s | grep "pages free$" | awk '{$1=$1;print}' | cut -d ' ' -f1)
+
+min_page_size=$(($min_MB_level * 1024 * 1024 / $page_size))
+
+if [ $free_pages -lt $min_page_size  ]; then
+  echo "$(date): Memory out" >> /var/log/temp_memory_out
+fi

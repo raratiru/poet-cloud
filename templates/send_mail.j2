@@ -1,0 +1,8 @@
+#!/bin/sh
+
+TIMEZONE=$(date | cut -d ' ' -f5)
+YESTERDAY=$(TZ=$TIMEZONE+24 date)
+yest=$(echo "$YESTERDAY" | sed -e 's/ [0-9][0-9]:[0-9][0-9]:[0-9][0-9] .* /\.\*/')  # Catches EEST and EET -> Result "Wed Oct 31.*2018"
+
+# tod=$(date | sed -e 's/ [0-9][0-9]:[0-9][0-9]:[0-9][0-9] EE.*T /\.\*/')  # Catches EEST and EET -> Result "Wed Oct 31.*2018"
+cat /var/mail/{{ ansible_ssh_user }} | sed -n -e "/${yest}/,\$p" | mail -s "Daily Mail" {{ admin_email }}  # ,\$p means "print from selection to the end of the file"

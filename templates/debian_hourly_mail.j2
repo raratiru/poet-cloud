@@ -1,0 +1,21 @@
+#!/bin/bash
+
+touch /var/log/memory_out.log
+touch /var/log/temp_memory_out
+touch /var/log/services_down.log
+touch /var/log/temp_services_down
+
+if [[ -s /var/log/temp_memory_out ]]
+then
+  echo -e "Subject:Out of memory during the last hour \n\n $(/usr/local/bin/memory_stats)\n" | /usr/sbin/sendmail -F "Charlie Root {{ ansible_ssh_user }}" {{ admin_email }}
+fi
+/usr/bin/cat /var/log/temp_memory_out >> /var/log/memory_out.log
+/usr/bin/cat /dev/null > /var/log/temp_memory_out
+
+if [[ -s /var/log/temp_services_down ]]
+then
+  echo -e "Subject:Services are not running \n\n $(/bin/cat /var/log/temp_services_down)\n" | /usr/sbin/sendmail -F "Charlie Root {{ ansible_ssh_user }}" {{ admin_email }}
+fi
+
+/usr/bin/cat /var/log/temp_services_down >> /var/log/services_down.log
+/usr/bin/cat /dev/null > /var/log/temp_services_down

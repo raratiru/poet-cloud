@@ -1,0 +1,35 @@
+#!/bin/ksh
+
+touch /var/log/memory_out
+touch /var/log/temp_memory_out
+touch /var/log/services_down
+touch /var/log/temp_services_down
+
+if [[ -s /var/log/temp_memory_out ]]
+then
+/usr/local/bin/memory_stats | mail -s "Out of memory during the last hour" {{ admin_email }}
+fi
+/bin/cat /var/log/temp_memory_out >> /var/log/memory_out
+/bin/cat /dev/null > /var/log/temp_memory_out
+
+if [[ -s /var/log/temp_services_down ]]
+then
+  /bin/cat /var/log/temp_services_down | mail -s "Services are not running" {{ admin_email }}
+fi
+
+/bin/cat /var/log/temp_services_down >> /var/log/services_down
+/bin/cat /dev/null > /var/log/temp_services_down
+
+# Celery Section
+
+
+
+# if [[ -s /var/log/celery/worker1_errored.log ]]
+# then
+#   /bin/cat /var/log/celery/worker1_errored.log | mail -s "Celery Errors during the last hour" tantiras@yandex.com
+# fi
+#
+# /bin/cat /var/log/celery/worker1_errored.log >> /var/log/celery/worker1_sent.log
+# /bin/cat /dev/null > /var/log/celery/worker1_errored.log
+#
+

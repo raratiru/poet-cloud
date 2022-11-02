@@ -1,0 +1,55 @@
+#!/bin/bash
+
+echo '*******************************'
+/bin/date
+echo '*******************************'
+
+function memory_share
+{
+mem=0
+memv=0
+echo "PHY - VIR"
+while IFS=" " read -r rss vsz comm
+do
+  mbs=$((rss/1024))
+  mbsv=$((vsz/1024))
+  mem=$((mbs + mem))
+  memv=$((mbsv + memv))
+  echo $mbs"MB - "$mbsv"MB - $comm"
+done <<EOF
+$(/usr/bin/ps -ax -o rss=,vsz=,comm= -U $1)
+EOF
+echo "------------------------------------"
+echo $mem"MB - "$memv"MB for user $1"
+echo " "
+}
+
+echo "**************************************"
+# memory_share www
+# memory_share _postgresql
+memory_share root
+echo "**************************************"
+echo ' '
+echo '***All processes***:'
+/usr/bin/top -o RES -n 1
+echo ' '
+echo '***Exclude idle processes***:'
+echo ' '
+/usr/bin/top -i -o RES -n 1
+echo ' '
+echo '***Vmstat:'
+echo ' '
+/usr/bin/vmstat
+echo ' '
+echo '***Netstat:'
+echo 'Show all connections tcp udp with pid without reverse DNS lookup (n)'
+/usr/bin/netstat -atunp | grep -v 127.0.0.1 | grep -v "::1"
+echo ' '
+echo 'You may also run:'
+echo 'netstat -na -f inet | grep ESTABLISHED'
+echo 'systat vmstat'
+echo 'systat malloc'
+echo 'systat iostat'
+echo 'systat pf'
+echo 'systat netstat'
+echo 'vmstat -m'

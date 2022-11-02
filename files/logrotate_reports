@@ -1,0 +1,17 @@
+/var/log/memory_out.log {
+    daily
+    rotate 31
+    compress
+    compressext .gz
+    missingok
+    create 0640 root adm
+}
+
+/var/log/services_down.log {
+    daily
+    rotate 31
+    compress
+    compressext .gz
+    missingok
+    create 0640 root adm
+}

@@ -1,0 +1,28 @@
+#!/bin/ksh
+
+service_stat()
+{
+  rcctl check "$1" > /dev/null
+  ex_st=$?
+  if [ "$ex_st" -ne "0" ]
+  then
+    rcctl start "$1"
+    echo "Check why the service $1 was down" >> /var/log/temp_services_down
+  fi
+}
+
+# Create an array
+set -A services
+
+# Add service httpd
+
+# Add service postgresql
+
+# Add service uwsgi
+
+# Add service memcached
+
+for i in "${services[@]}"
+do
+  service_stat "$i"
+done

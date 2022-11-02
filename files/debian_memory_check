@@ -1,0 +1,10 @@
+#!/bin/bash
+
+MIN_MB_LEVEL=150
+CURRENT_MB_LEVEL=$(free --mega | awk 'FNR == 2 {print $7}')
+
+if [ $MIN_MB_LEVEL -gt $CURRENT_MB_LEVEL ]
+then
+  echo "$(date): Memory out" >> /var/log/temp_memory_out
+fi
+

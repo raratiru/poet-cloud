@@ -1,0 +1,21 @@
+#!/bin/bash
+
+service_stat()
+{
+  active=$(/usr/bin/systemctl is-active $1)
+  if [ "$active" != "active" ]
+  then
+    /usr/bin/systemct start $1
+    echo "Check why the service $1 was down" >> /var/log/temp_services_down
+  fi
+}
+
+# Create an array
+declare -a services
+# Add services
+
+# Loop through services
+for i in ${services[@]}
+do
+  service_stat $i
+done

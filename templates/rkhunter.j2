@@ -1,0 +1,20 @@
+#!/bin/bash
+
+mkdir -p /var/log/rkhunter
+
+if [ ! -f /var/log/rkhunter/expected.log ]
+then
+  /usr/bin/rkhunter --cronjob --report-warnings-only > /var/log/rkhunter/expected.log
+fi
+
+/usr/bin/rkhunter --cronjob --report-warnings-only > /var/log/rkhunter/daily.log
+
+DIFF=$(diff /var/log/rkhunter/daily.log /var/log/rkhunter/expected.log)
+
+if [ -n "$DIFF" ]
+then
+  echo -e "Subject:Rkhunter Alert\n\n$DIFF" \
+  | /usr/sbin/sendmail -F "Charlie Root {{ inventory_hostname }}" {{ admin_email }}
+fi
+
+mv /var/log/rkhunter/daily.log /var/log/rkhunter/expected.log
