@@ -91,3 +91,6 @@
       # Enable ipv6, ()Avoid RTNETLINK answers: Permission denied)
       net.ipv6.conf.all.disable_ipv6: 0
       net.ipv6.conf.all.forwarding: 1
+
+- name: Reboot
+  ansible.builtin.reboot:
