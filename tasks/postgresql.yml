@@ -1,0 +1,101 @@
+---
+- name: Install necessary SQL packages
+  block:
+    - name: Update System
+      apt:
+        update_cache: yes
+    - name: Upgrade System
+      apt:
+        upgrade: full
+    - name: Remove useless packages from the cache
+      apt:
+        autoclean: yes
+    - name: Remove dependencies that are no longer required
+      apt:
+        autoremove: yes
+    - name: Install SQL
+      apt:
+        name: ["postgresql", "postgresql-server-dev-all", "odbc-postgresql"]
+        state: present
+    - name: Install Postgis
+      apt:
+        name:
+          [
+            "gcc",
+            "make",
+            "libxml2",
+            "libjson-c5",
+            "libjson-c-dev",
+            "binutils",
+            "libproj-dev",
+            "gdal-bin",
+            "python3-gdal",
+            "libgeoip1",
+            "geoip-bin",
+            "postgis",
+            "python3-psycopg2",
+          ]
+        state: present
+  become: True
+
+- name: Initialize postgresql
+  become: True
+  service:
+    name: postgresql
+    state: started
+    enabled: yes
+
+- name: Get postgresql directory
+  become: True
+  shell: ps aux | grep 'postgres *-D' | sed 's/^.*config_file=//g' | sed 's/postgresql.conf//g'
+  register: postgres_dir
+
+- name: Make user postgres reachable
+  become: True
+  lineinfile:
+    dest: "{{ postgres_dir.stdout + 'pg_hba.conf' }}"
+    regexp: '^local\s+all\s+postgres\s+peer$'
+    line: "local   all             postgres                              trust"
+    backrefs: yes
+
+- name: Restart postgresql
+  become: True
+  service:
+    name: postgresql
+    state: restarted
+    enabled: yes
+
+- name: Create postgresql user
+  become: False
+  become_user: postgres
+  postgresql_user:
+    name: "{{ django_postgres_user }}"
+    role_attr_flags: SUPERUSER
+    password: "{{ django_postgres_user_pass }}"
+
+- name: Set postgresql user authentication
+  become: True
+  lineinfile:
+    dest: "{{ postgres_dir.stdout + 'pg_hba.conf' }}"
+    regexp: '^{{ item.2 }}\s+all\s+{{ django_postgres_user}}\s+{{ item.1}}\s+md5$'
+    insertafter: "{{ item.0 }}"
+    line: "{{ item.2 }}    all             {{ django_postgres_user }}          {{ item.1 }}            md5"
+  with_together:
+    - ['^#\s\"local\"', '^#\sIPv4\slocal.+', '^#\sIPv6\slocal.+']
+    - ["           ", "127.0.0.1/32", "::1/128     "]
+    - ["local", "host", "host"]
+
+- name: Revert changes to user postgres
+  become: True
+  lineinfile:
+    dest: "{{ postgres_dir.stdout + 'pg_hba.conf' }}"
+    regexp: '^local\s+all\s+postgres\s+trust$'
+    line: "local   all             postgres                                peer"
+    backrefs: yes
+
+- name: Restart postgresql
+  become: True
+  service:
+    name: postgresql
+    state: restarted
+    enabled: yes

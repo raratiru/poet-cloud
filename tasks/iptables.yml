@@ -1,0 +1,62 @@
+---
+- name: Create iptables directory
+  become: yes
+  file:
+    path: '/etc/iptables'
+    state: directory
+    owner: root
+    group: root
+    mode: 0700
+
+- name: copy rules
+  become: True
+  template:
+    src: "{{ item }}"
+    dest: "/etc/iptables/{{ item }}"
+    owner: root
+    group: root
+    mode: 0700
+  with_items:
+    - "ipv4.rules"
+    - "ipv6.rules"
+
+- name: Copy Files and Templates
+  become: True
+  block:
+    - name: Copy starting scripts
+      copy:
+        src: "{{ item }}"
+        dest: "/etc/iptables/{{ item }}"
+        owner: root
+        group: root
+        mode: 0700
+      with_items:
+        - "firewall.start"
+        - "pre-firewall.start"
+        - "pre-ipv4.rules"
+        - "pre-ipv6.rules"
+    - name: Copy service files
+      copy:
+        src: "{{ item }}"
+        dest: "/etc/systemd/system/{{ item }}"
+        owner: root
+        group: root
+        mode: 0644
+      with_items:
+        - "firewall.service"
+        - "pre-firewall.service"
+
+- name: Reread systemd configuration
+  become: True
+  systemd:
+    daemon_reload: yes
+
+- name: Enable firewall
+  service:
+    name: "{{ item }}"
+    enabled: yes
+    state: stopped
+  become: True
+  with_items:
+    - "pre-firewall"
+    - "firewall"

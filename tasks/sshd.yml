@@ -1,0 +1,72 @@
+---
+- name: verify sshd is enabled
+  become: True
+  service: name=ssh enabled=yes
+
+- name: remove ssh comments in config
+  become: True
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    state: absent
+    regexp: ^{{ item.key }}
+    backup: yes
+  with_items:
+    - { key: '#' }
+    - { key: '$' }
+
+- name: add ssh parameters
+  become: True
+  lineinfile:
+    dest: "/etc/ssh/sshd_config"
+    state: present
+    regexp: "^{{ item.key }}"
+    line: "{{ item.key }} {{ item.value }}"
+    insertafter: BOF
+    backup: yes
+  with_items:
+    - { key: 'UseDNS', value: 'no' }
+    - { key: 'StrictModes', value: 'yes' }
+    - { key: 'SyslogFacility', value: 'AUTH' }
+    - { key: 'HostBasedAuthentication', value: 'no' }
+    - { key: 'IgnoreUserKnownHosts', value: 'yes' }
+    - { key: 'X11Forwarding', value: 'no' }
+    - { key: 'ClientAliveCountMax', value: '2' }
+    - { key: 'ClientAliveInterval', value: '60' }
+    - { key: 'MaxStartups', value: '14' }
+    - { key: 'LoginGraceTime', value: '10' }
+    - { key: 'ChallengeResponseAuthentication', value: 'no' }
+    - { key: 'PasswordAuthentication', value: 'no' }
+    - { key: 'PubkeyAuthentication', value: 'yes' }
+    - { key: 'PermitEmptyPasswords', value: 'no' }
+    - { key: 'PermitRootLogin', value: 'no' }
+    - { key: 'Port', value: '22' }
+    - { key: 'Protocol', value: '2' }
+    - { key: 'LogLevel', value: 'VERBOSE' }
+    - { key: 'AllowTcpForwarding', value: 'no' }
+    - { key: 'Compression', value: 'no' }
+    - { key: 'MaxAuthTries', value: '2' }
+    - { key: 'MaxSessions', value: '2' }
+    - { key: 'TCPKeepAlive', value: 'no' }
+    - { key: 'AllowAgentForwarding', value: 'no' }
+
+- name: Check if report script exists
+  stat:
+    path: /usr/local/bin/check_services
+  register: docker_services
+
+- name: Append services to report script
+  become: True
+  lineinfile:
+    dest: "/usr/local/bin/check_services"
+    insertafter: "^# Add services"
+    line: "services+=\"{{ item }} \""
+    state: present
+  with_items:
+    - "ssh"
+  when: docker_services.stat.exists == True
+
+- name: restart ssh
+  become: True
+  service:
+    name: sshd
+    state: restarted

@@ -1,0 +1,124 @@
+---
+- name: Install necessary dependencies
+  become: True
+  apt:
+    name: ["curl", "gnupg2", "ca-certificates", "lsb-release"]
+    state: present
+
+- name: Add the signing key, if not present
+  become: True
+  apt_key:
+    id: 573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62
+    url: https://nginx.org/keys/nginx_signing.key
+    state: present
+
+- name: Add APT deb repository
+  become: True
+  apt_repository:
+    repo: "deb [arch=amd64] http://nginx.org/packages/debian/ {{ ansible_distribution_release }} nginx"
+
+- name: Add APT deb-src repository
+  become: True
+  apt_repository:
+    repo: "deb-src [arch=amd64] http://nginx.org/packages/debian/ {{ ansible_distribution_release }} nginx"
+
+- name: Update and Install Nginx
+  become: True
+  block:
+    - name: Update System
+      apt:
+        update_cache: yes
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+
+- name: Create html directory for this server
+  become: True
+  file:
+    path: "/home/{{ ansible_ssh_user }}/00_server/{{ main_server_name }}"
+    state: directory
+    owner: nginx
+    group: "{{ ansible_ssh_user }}"
+    mode: "0770"
+
+- name: Copy Maintenance page
+  become: True
+  copy:
+    src: maintain.html
+    dest: "/home/{{ ansible_ssh_user }}/00_server/{{ main_server_name }}/maintain.html"
+    owner: nginx
+    group: "{{ ansible_ssh_user }}"
+
+- name: Copy Maintenance Script Enable
+  become: True
+  template:
+    src: enable_nginx_maintenance.j2
+    dest: "/usr/local/bin/enable_nginx_maintenance"
+    owner: root
+    group: root
+    mode: 0700
+
+- name: Copy Maintenance Script Disable
+  become: True
+  template:
+    src: disable_nginx_maintenance.j2
+    dest: "/usr/local/bin/disable_nginx_maintenance"
+    owner: root
+    group: root
+    mode: 0700
+
+- name: copy necessary templates
+  template:
+    src: "{{ item.source }}"
+    dest: "{{ item.destination }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+  become: True
+  with_items:
+    - {
+        source: nginx.conf_pre.j2,
+        destination: /etc/nginx/nginx.conf,
+        owner: root,
+        group: root,
+        mode: "0640",
+      }
+    - {
+        source: nginx_site.conf_pre.j2,
+        destination: "/etc/nginx/conf.d/{{ main_server_name }}.conf",
+        owner: root,
+        group: root,
+        mode: "0640",
+      }
+
+- import_role:
+    name: devsec.hardening.nginx_hardening
+  vars:
+    nginx_client_body_buffer_size: 16k
+    nginx_client_max_body_size: 8m
+    nginx_remove_default_site: false
+    nginx_large_client_header_buffers: 4 8k
+
+- name: Initialize nginx
+  become: True
+  service:
+    name: nginx
+    state: restarted
+    enabled: yes
+
+- name: Check if report script exists
+  stat:
+    path: /usr/local/bin/check_services
+  register: nginx_services
+
+- name: Append services to report script
+  become: True
+  lineinfile:
+    dest: "/usr/local/bin/check_services"
+    insertafter: "^# Add services"
+    line: 'services+="{{ item }} "'
+    state: present
+  with_items:
+    - "nginx"
+  when: nginx_services.stat.exists == True

@@ -1,0 +1,10 @@
+[Unit]
+Description=Restore iptables firewall rules
+After=fail2ban.service docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/etc/iptables/firewall.start
+
+[Install]
+WantedBy=multi-user.target

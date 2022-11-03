@@ -1,0 +1,4 @@
+#!/bin/bash
+
+/etc/cron.daily/chkrootkit
+/usr/bin/cp -a /var/log/chkrootkit/log.today /var/log/chkrootkit/log.expected

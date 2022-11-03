@@ -1,0 +1,203 @@
+---
+- name: "Install bare metal necessary packages"
+  apt:
+    name: "{{ main_debian_packages }}"
+    state: present
+  become: True
+
+- name: Configure timezone
+  become: True
+  shell: /usr/bin/timedatectl set-timezone UTC
+
+- name: Unattended upgrades
+  become: True
+  lineinfile:
+    dest: "/etc/apt/apt.conf.d/50unattended-upgrades"
+    regexp: "{{ item.0 }}"
+    backup: yes
+    backrefs: yes
+    line: "{{ item.1 }}"
+    state: present
+  with_together:
+    - [
+        "Unattended-Upgrade::MinimalSteps",
+        'Unattended-Upgrade::Mail "',
+        "Unattended-Upgrade::MailOnlyOnError",
+        'Unattended-Upgrade::Automatic-Reboot "',
+        "Unattended-Upgrade::Automatic-Reboot-Time",
+      ]
+    - [
+        'Unattended-Upgrade::MinimalSteps "true";',
+        'Unattended-Upgrade::Mail "{{ admin_email }}";',
+        'Unattended-Upgrade::MailOnlyOnError "true";',
+        'Unattended-Upgrade::Automatic-Reboot "true";',
+        'Unattended-Upgrade::Automatic-Reboot-Time "02:00";',
+      ]
+
+- name: Configure exim to send mail as internet
+  block:
+    - name: Change exim4 configuration
+      lineinfile:
+        dest: "/etc/exim4/update-exim4.conf.conf"
+        regexp: "^dc_eximconfig_configtype="
+        backup: yes
+        backrefs: yes
+        line: 'dc_eximconfig_configtype="internet"'
+    - name: "Implement exim4 changes"
+      shell: /sbin/update-exim4.conf
+  become: True
+
+- name: Change default umask to 027
+  become: True
+  lineinfile:
+    dest: "/etc/login.defs"
+    regexp: "^UMASK.*[0-9][0-9][0-9]$"
+    line: "UMASK 027"
+
+- name: Change default sshd conf in rkhunter
+  become: True
+  lineinfile:
+    dest: "/etc/rkhunter.conf"
+    regexp: "^ALLOW_SSH_PROT_V1="
+    line: "ALLOW_SSH_PROT_V1=0"
+
+- name: Enable daily checkrootkit
+  become: True
+  block:
+    - name: Chkrootkit run daily
+      lineinfile:
+        dest: "/etc/chkrootkit.conf"
+        regexp: "RUN_DAILY="
+        line: 'RUN_DAILY="true"'
+    - name: Chkrootkit enable daily diffs
+      lineinfile:
+        dest: "/etc/chkrootkit.conf"
+        regexp: "DIFF_MODE="
+        line: 'DIFF_MODE="true"'
+
+- name: Chkrootkit Execute first time script
+  become: True
+  block:
+    - name: Chkrootkit Check if it is first time
+      stat:
+        path: /var/log/chkrootkit/log.expected
+      register: chkroot_exists
+    - name: Chkrootkit Copy first time script
+      copy:
+        src: chkrootkit.first
+        dest: "./"
+        owner: root
+        group: bin
+        mode: 0710
+      when: chkroot_exists.stat.exists == false
+    - name: Chkrootkit Execute script
+      command: ./chkrootkit.first
+      when: chkroot_exists.stat.exists == false
+    - name: Chkrootkit Remove script
+      file:
+        path: ./chkrootkit.first
+        state: absent
+
+- name: Configure audit logs
+  become: yes
+  ansible.builtin.lineinfile:
+    path: /etc/audit/auditd.conf
+    regexp: "{{ item.0 }}"
+    line: "{{ item.1 }}"
+  loop:
+    - ["^max_log_file ", "max_log_file = 2"]
+    - ["^max_log_file_action ", "max_log_file_action = rotate"]
+    - ["^space_left ", "space_left = 500"]
+    - ["^space_left_action ", "space_left_action = rotate"]
+
+- name: Enable and restart configured services
+  service:
+    name: "{{ item  }}"
+    enabled: yes
+    state: restarted
+  become: True
+  with_items:
+    - "haveged"
+    - "auditd"
+
+- name: Append services to report script
+  become: True
+  lineinfile:
+    dest: "/usr/local/bin/check_services"
+    insertafter: "^# Add services"
+    line: 'services+="{{ item }} "'
+    state: present
+  with_items:
+    - "exim4"
+    - "unattended-upgrades"
+    - "haveged"
+    - "auditd"
+
+- name: Configure Timezone /tmp management locales
+  block:
+    - name: Clean tmp & set locales
+      shell: |
+        /bin/echo -e "#! /bin/bash\r\n\r\n/usr/bin/find /tmp/ -type f -mtime +15 -exec rm -f {} \;" > /etc/cron.daily/tmp_cleanup
+        localedef -i en_US -f UTF-8 en_US.utf8
+    - name: Configure locales
+      lineinfile:
+        dest: "/etc/default/locale"
+        regexp: "^LANG="
+        backup: yes
+        backrefs: yes
+        line: 'LANG="en_US.utf8"'
+        state: present
+  become: True
+
+- name: Configure auto upgrading, motd, needrestart
+  block:
+    - name: Enable autoupgrades adding 20auto-upgrades file
+      copy:
+        src: 20auto-upgrades
+        dest: /etc/apt/apt.conf.d/20auto-upgrades
+        owner: root
+        group: root
+        mode: 0644
+    - name: Copy motd for ssh login message
+      copy:
+        src: motd
+        dest: /etc/motd
+        owner: root
+        group: root
+        mode: 0600
+        force: yes
+    - name: Configure needrestart to automatically restart
+      lineinfile:
+        dest: "/etc/needrestart/needrestart.conf"
+        regexp: "\\$nrconf\\{restart\\} ="
+        line: "$nrconf{restart} = 'a';"
+  become: True
+
+- name: Enable timesyncd
+  service:
+    name: systemd-timesyncd
+    enabled: yes
+    state: restarted
+  become: True
+
+- name: "Create necessary system directories"
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  with_items:
+    - "~/.virtualenvs/"
+
+- name: Check if report script exists exists
+  stat:
+    path: /usr/local/bin/check_services
+  register: services
+
+- name: Append timesyncd to report script
+  become: True
+  lineinfile:
+    dest: "/usr/local/bin/check_services"
+    insertafter: "^# Add services"
+    line: 'services+="systemd-timesyncd "'
+    state: present
+  when: services.stat.exists == True

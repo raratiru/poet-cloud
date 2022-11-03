@@ -1,0 +1,8 @@
+---
+- name: "Stop when Postgresql environment variables are undefined"
+  meta: end_play
+  when: django_postgres_user == "" or django_postgres_user_pass == ""
+
+- name: "Stop when Nginx environment variables are undefined"
+  meta: end_play
+  when: main_server_name == ""

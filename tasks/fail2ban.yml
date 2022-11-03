@@ -1,0 +1,32 @@
+---
+- name: Send iptables jail.local
+  template:
+    src: 'jail_ipt.local'
+    dest: '/etc/fail2ban/jail.local'
+    owner: root
+    group: root
+    mode: 0644
+  become: True
+
+- name: Start fail2ban
+  service:
+    name: fail2ban
+    enabled: yes
+    state: started
+  become: True
+
+- name: Check if report script exists
+  stat:
+    path: /usr/local/bin/check_services
+  register: fail2ban_services
+
+- name: Append services to report script
+  become: True
+  lineinfile:
+    dest: "/usr/local/bin/check_services"
+    insertafter: "^# Add services"
+    line: "services+=\"{{ item }} \""
+    state: present
+  with_items:
+    - "fail2ban"
+  when: fail2ban_services.stat.exists == True

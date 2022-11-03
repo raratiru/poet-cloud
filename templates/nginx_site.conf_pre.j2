@@ -1,0 +1,76 @@
+#
+# Ansible managed
+#
+
+upstream frontend_servers {
+  least_conn;
+  zone frontend 64k;
+  server 127.0.0.1:8001 weight=1 fail_timeout=0s;
+}
+
+{% if aliases_server_names is defined %}
+# Redirect any alias to main_server_name
+server {
+  listen 80;
+  listen [::]:80;
+
+  server_name {{ aliases_server_names }};
+  root /usr/share/nginx/html;
+
+  location ~ /\.well-known/acme-challenge/ {
+    default_type "text/plain";
+    try_files $uri =404;
+    break;
+  }
+
+  location / {
+    return 301 http://{{ main_server_name }}$request_uri;
+  }
+}
+{% endif %}
+
+server {
+  listen 80 deferred;
+  listen [::]:80 deferred;
+
+  server_name {{ main_server_name }};
+  root {{ ansible_user_dir }}/00_server/{{ main_server_name }};
+
+  location ~ /\.well-known/acme-challenge/ {
+    root /usr/share/nginx/html;
+    default_type "text/plain";
+    try_files $uri =404;
+    break;
+  }
+
+  if (-f $document_root/maintenance.html) {
+    return 503;
+  }
+
+  location / {
+    try_files $uri $uri/ =404;
+  }
+
+  location @proxy {
+    proxy_hide_header X-Powered-By;
+    proxy_pass http://frontend_servers;
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_redirect off;
+    proxy_buffering on;
+  }
+
+  # Redirect everything to maintenance.html
+  error_page 503 @maintenance;
+  location @maintenance {
+    rewrite ^(.*)$ /maintenance.html break;
+  }
+
+  # redirect server error pages to the static page /50x.html
+  #
+  error_page   500 502 504  /50x.html;
+  location = /50x.html {
+    root   /usr/share/nginx/html;
+  }
+}

@@ -2,9 +2,30 @@
 - import_tasks: verify_variables.yml
   tags: [always]
 
+- import_tasks: verify_extra_variables.yml
+  tags: [never, compact]
+
 - import_tasks: new_instance.yml
   tags: [never, new_instance]
   when: ansible_ssh_user == 'root'
 
 - import_tasks: monitoring.yml
+  tags: [never, compact]
+
+- import_tasks: os_prep.yml
+  tags: [never, compact]
+
+- import_tasks: sshd.yml
+  tags: [never, compact]
+
+- import_tasks: fail2ban.yml
+  tags: [never, compact]
+
+- import_tasks: iptables.yml
+  tags: [never, compact]
+
+- import_tasks: postgresql.yml
+  tags: [never, compact]
+
+- import_tasks: nginx.yml
   tags: [never, compact]

@@ -1,2 +1,20 @@
 ---
 # vars file for poet
+
+main_debian_packages:
+  [
+    "rsync",
+    "fail2ban",
+    "mutt",
+    "exim4",
+    "openssl",
+    "unattended-upgrades",
+    "apt-listchanges",
+    "needrestart",
+    "libpam-tmpdir",
+    "rkhunter",
+    "chkrootkit",
+    "haveged",
+    "auditd",
+    "screen",
+  ]
