@@ -20,11 +20,11 @@
 -A managed_input -s {{ ansible_facts.default_ipv4.address }}/32 -m comment --comment "Prevent Land Attack" -j DROP
 -A managed_input -i lo -m comment --comment "Allow loopback" -j ACCEPT
 -A managed_input -i {{ ansible_facts.default_ipv4.interface }} -j net_input
-{%- if dmz_interface is defined -%}-A managed_input -i {{ dmz_interface }} -j loc_input {% endif %}
+{% if dmz_interface is defined %}-A managed_input -i {{ dmz_interface }} -j loc_input {% endif %}
 -A managed_input -j drop_input_log
 -A managed_output -o lo -m comment --comment "Allow loopback" -j ACCEPT
 -A managed_output -o {{ ansible_facts.default_ipv4.interface }} -j net_output
-{%- if dmz_interface is defined -%}-A managed_output -o {{ dmz_interface }} -j loc_output{% endif%}
+{% if dmz_interface is defined %}-A managed_output -o {{ dmz_interface }} -j loc_output{% endif%}
 -A managed_output -j drop_output_log
 -A managed_martians -s 0.0.0.0/8 -m comment --comment "\'This\' network" -j DROP
 -A managed_martians -s 10.0.0.0/8 -m comment --comment "Private-use networks" -j DROP
