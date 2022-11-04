@@ -5,4 +5,4 @@
 
 - name: "Stop when Nginx environment variables are undefined"
   meta: end_play
-  when: main_server_name == ""
+  when: server_domain_name == "" or domains == ""

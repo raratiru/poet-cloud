@@ -1,0 +1,66 @@
+---
+- name: copy necessary templates
+  template:
+    src: "{{ item.source }}"
+    dest: "{{ item.destination }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+  become: True
+  with_items:
+    # - {
+    #     source: nginx.conf_pre.j2,
+    #     destination: /etc/nginx/nginx.conf,
+    #     owner: root,
+    #     group: root,
+    #     mode: "0640",
+    #   }
+    - {
+        source: nginx_site.conf_pre.j2,
+        destination: "/etc/nginx/conf.d/{{ server_domain_name }}.conf",
+        owner: root,
+        group: root,
+        mode: "0640",
+      }
+
+- name: "Nginx: Create html directory for this server"
+  become: True
+  file:
+    path: "/home/{{ ansible_ssh_user }}/00_server/{{ server_domain_name }}"
+    state: directory
+    owner: nginx
+    group: "{{ ansible_ssh_user }}"
+    mode: "0770"
+
+- name: "Nginx: Copy Maintenance page"
+  become: True
+  copy:
+    src: maintain.html
+    dest: "/home/{{ ansible_ssh_user }}/00_server/{{ server_domain_name }}/maintain.html"
+    owner: nginx
+    group: "{{ ansible_ssh_user }}"
+
+- name: "Nginx: Copy Maintenance Script Enable"
+  become: True
+  template:
+    src: enable_nginx_maintenance.j2
+    dest: "/usr/local/bin/enable_nginx_maintenance"
+    owner: root
+    group: root
+    mode: 0700
+
+- name: "Nginx: Copy Maintenance Script Disable"
+  become: True
+  template:
+    src: disable_nginx_maintenance.j2
+    dest: "/usr/local/bin/disable_nginx_maintenance"
+    owner: root
+    group: root
+    mode: 0700
+
+- name: "Change home directory permissions and group"
+  ansible.builtin.file:
+    path: "/home/{{ ansible_ssh_user }}"
+    state: directory
+    group: nginx
+    mode: "0750"

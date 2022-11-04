@@ -1,4 +1,4 @@
 #!/bin/bash
 
-cp /home/{{ ansible_ssh_user }}/00_server/{{ main_server_name }}/maintain.html /home/{{ ansible_ssh_user }}/00_server/{{ main_server_name }}/maintenance.html
-chown nginx:{{ ansible_ssh_user }} /home/{{ ansible_ssh_user }}/00_server/{{ main_server_name }}/maintenance.html
+cp /home/{{ ansible_ssh_user }}/00_server/{{ server_domain_name }}/maintain.html /home/{{ ansible_ssh_user }}/00_server/{{ server_domain_name }}/maintenance.html
+chown nginx:{{ ansible_ssh_user }} /home/{{ ansible_ssh_user }}/00_server/{{ server_domain_name }}/maintenance.html

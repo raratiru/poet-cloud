@@ -8,13 +8,13 @@ upstream frontend_servers {
   server 127.0.0.1:8001 weight=1 fail_timeout=0s;
 }
 
-{% if aliases_server_names is defined %}
-# Redirect any alias to main_server_name
+{% if server_alias_domain_name is defined %}
+# Redirect any alias to server_domain_name
 server {
   listen 80;
   listen [::]:80;
 
-  server_name {{ aliases_server_names }};
+  server_name {{ server_alias_domain_name }};
   root /usr/share/nginx/html;
 
   location ~ /\.well-known/acme-challenge/ {
@@ -24,7 +24,7 @@ server {
   }
 
   location / {
-    return 301 http://{{ main_server_name }}$request_uri;
+    return 301 http://{{ server_domain_name }}$request_uri;
   }
 }
 {% endif %}
@@ -33,8 +33,8 @@ server {
   listen 80 deferred;
   listen [::]:80 deferred;
 
-  server_name {{ main_server_name }};
-  root {{ ansible_user_dir }}/00_server/{{ main_server_name }};
+  server_name {{ server_domain_name }};
+  root {{ ansible_user_dir }}/00_server/{{ server_domain_name }};
 
   location ~ /\.well-known/acme-challenge/ {
     root /usr/share/nginx/html;
@@ -59,6 +59,7 @@ server {
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_redirect off;
     proxy_buffering on;
+    proxy_read_timeout 3600s;
   }
 
   # Redirect everything to maintenance.html

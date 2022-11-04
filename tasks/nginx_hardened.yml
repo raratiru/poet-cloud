@@ -1,0 +1,68 @@
+---
+- name: "Nginx: Install necessary dependencies"
+  become: True
+  apt:
+    name: ["curl", "gnupg2", "ca-certificates", "lsb-release"]
+    state: present
+
+- name: "Nginx: Add the signing key, if not present"
+  become: True
+  apt_key:
+    id: 573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62
+    url: https://nginx.org/keys/nginx_signing.key
+    state: present
+
+- name: "Nginx: Add APT deb repository"
+  become: True
+  apt_repository:
+    repo: "deb [arch=amd64] http://nginx.org/packages/debian/ {{ ansible_distribution_release }} nginx"
+
+- name: "Nginx: Add APT deb-src repository"
+  become: True
+  apt_repository:
+    repo: "deb-src [arch=amd64] http://nginx.org/packages/debian/ {{ ansible_distribution_release }} nginx"
+
+- name: "Nginx: Update and Install Nginx"
+  become: True
+  block:
+    - name: Update System
+      apt:
+        update_cache: yes
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+
+
+- import_role:
+    name: devsec.hardening.nginx_hardening
+  become: True
+  vars:
+    nginx_client_body_buffer_size: 16k
+    nginx_client_max_body_size: 8m
+    nginx_remove_default_site: true
+    nginx_large_client_header_buffers: 4 8k
+    nginx_limit_conn: default 20
+
+- name: "Nginx: Initialize nginx"
+  become: True
+  service:
+    name: nginx
+    state: restarted
+    enabled: yes
+
+- name: "Nginx: Check if report script exists"
+  stat:
+    path: /usr/local/bin/check_services
+  register: nginx_services
+
+- name: "Nginx: Append services to report script"
+  become: True
+  lineinfile:
+    dest: "/usr/local/bin/check_services"
+    insertafter: "^# Add services"
+    line: 'services+="{{ item }} "'
+    state: present
+  with_items:
+    - "nginx"
+  when: nginx_services.stat.exists == True

@@ -1,5 +1,5 @@
 ---
 # defaults file for poet
 
-managing_user: "claudia"
 ansible_ssh_user: "{{ managing_user }}"
+email_sender: "{{ admin_email }}"

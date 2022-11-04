@@ -110,6 +110,13 @@
     - ["^space_left ", "space_left = 500"]
     - ["^space_left_action ", "space_left_action = rotate"]
 
+- name: Add a valid email as sender to exim4
+  become: True
+  lineinfile:
+    dest: "/etc/email-addresses"
+    line: "root:{{ email_sender }}"
+    state: present
+
 - name: Enable and restart configured services
   service:
     name: "{{ item  }}"
