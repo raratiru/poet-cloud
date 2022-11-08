@@ -24,21 +24,27 @@
       }
 
 - name: "Nginx: Create html directory for this server"
+  command: "git init {{ ansible_user_dir }}/00_server/{{ server_domain_name }}"
+    args:
+      creates: "{{ ansible_user_dir }}/00_server/{{ server_domain_name }}/.git/HEAD"
+
+- name: "Nginx: Change permissions and group of the server directory"
   become: True
   file:
-    path: "/home/{{ ansible_ssh_user }}/00_server/{{ server_domain_name }}"
+    path: "{{ ansible_user_dir }}/00_server/{{ server_domain_name }}"
     state: directory
-    owner: nginx
-    group: "{{ ansible_ssh_user }}"
-    mode: "0770"
+    owner: "{{ ansible_ssh_user }}"
+    group: nginx
+    mode: "0750"
 
-- name: "Nginx: Copy Maintenance page"
-  become: True
-  copy:
-    src: maintain.html
-    dest: "/home/{{ ansible_ssh_user }}/00_server/{{ server_domain_name }}/maintain.html"
-    owner: nginx
-    group: "{{ ansible_ssh_user }}"
+# - name: "Nginx: Copy Maintenance page"
+#   become: True
+#   copy:
+#     src: maintain.html
+#     dest: "{{ ansible_user_dir }}/00_server/{{ server_domain_name }}/cellar/rubble/maintainance.html"
+#     owner: "{{ ansible_ssh_user }}"
+#     group: nginx
+#     mode: "0640"
 
 - name: "Nginx: Copy Maintenance Script Enable"
   become: True
@@ -47,7 +53,7 @@
     dest: "/usr/local/bin/enable_nginx_maintenance"
     owner: root
     group: root
-    mode: 0700
+    mode: "0700"
 
 - name: "Nginx: Copy Maintenance Script Disable"
   become: True
@@ -56,11 +62,11 @@
     dest: "/usr/local/bin/disable_nginx_maintenance"
     owner: root
     group: root
-    mode: 0700
+    mode: "0700"
 
 - name: "Change home directory permissions and group"
   ansible.builtin.file:
-    path: "/home/{{ ansible_ssh_user }}"
+    path: "{{ ansible_user_dir }}"
     state: directory
     group: nginx
     mode: "0750"

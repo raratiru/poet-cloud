@@ -17,4 +17,5 @@ main_debian_packages:
     "haveged",
     "auditd",
     "screen",
+    "git",
   ]

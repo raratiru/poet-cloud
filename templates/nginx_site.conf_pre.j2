@@ -34,7 +34,7 @@ server {
   listen [::]:80 deferred;
 
   server_name {{ server_domain_name }};
-  root {{ ansible_user_dir }}/00_server/{{ server_domain_name }};
+  root {{ ansible_user_dir }}/00_server/{{ server_domain_name }}/www;
 
   location ~ /\.well-known/acme-challenge/ {
     root /usr/share/nginx/html;
