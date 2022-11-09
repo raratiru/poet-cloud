@@ -7,11 +7,12 @@ Role to manage a cloud instance
 - ansible-galaxy collection install --force devsec.hardening
 
 ### Default variables
-
 - `ansible_ssh_user` - default: `{{ managing_user }}`
 - `email_sender` - default: `{{ admin_email }}`
 
 ### Environment variables
+
+- `managing_user` - env `POET_CLOUD_MANAGING_USER`
 
 - `ansible_become_password` - env `POET_CLOUD_BECOME_PASS`
 - `password_salt` - env `POET_CLOUD_PASSWORD_SALT`
