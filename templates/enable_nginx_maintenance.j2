@@ -1,4 +1,4 @@
 #!/bin/bash
 
-cp {{ ansible_user_dir }}/00_server/{{ server_domain_name }}/cellar/rubble/maintainance.html {{ ansible_user_dir }}/00_server/{{ server_domain_name }}/www/maintenance.html
+cp {{ ansible_user_dir }}/00_server/{{ server_domain_name }}/cellar/rubble/maintenance.html {{ ansible_user_dir }}/00_server/{{ server_domain_name }}/www/maintenance.html
 chown {{ ansible_ssh_user }}:nginx {{ ansible_user_dir }}/00_server/{{ server_domain_name }}/www/maintenance.html
