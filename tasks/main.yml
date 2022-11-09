@@ -1,6 +1,6 @@
 ---
 - import_tasks: verify_variables.yml
-  tags: [always]
+  tags: [never, compact, new_instance]
 
 - import_tasks: verify_extra_variables.yml
   tags: [never, compact]
