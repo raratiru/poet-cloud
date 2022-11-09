@@ -1,5 +1,6 @@
 ---
 # defaults file for poet
 
+managing_user: "{{ lookup('env', 'POET_CLOUD_MANAGING_USER') }}"
 ansible_ssh_user: "{{ managing_user }}"
 email_sender: "{{ admin_email }}"
