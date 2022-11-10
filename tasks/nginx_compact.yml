@@ -46,13 +46,22 @@
 #     group: nginx
 #     mode: "0640"
 
+- name: "Nginx: Create .local/bin directory"
+  become: True
+  file:
+    path: "{{ ansible_user_dir }}/.local/bin"
+    state: directory
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
+    mode: "0750"
+
 - name: "Nginx: Copy Maintenance Script Enable"
   become: True
   template:
     src: enable_nginx_maintenance.j2
     dest: "/usr/local/bin/enable_nginx_maintenance"
-    owner: root
-    group: root
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
     mode: "0700"
 
 - name: "Nginx: Copy Maintenance Script Disable"
@@ -60,11 +69,12 @@
   template:
     src: disable_nginx_maintenance.j2
     dest: "/usr/local/bin/disable_nginx_maintenance"
-    owner: root
-    group: root
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
     mode: "0700"
 
 - name: "Change home directory permissions and group"
+  become: True
   ansible.builtin.file:
     path: "{{ ansible_user_dir }}"
     state: directory
