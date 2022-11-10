@@ -1,4 +1,16 @@
 ---
-- name: "Stop when environment variables are undefined"
+- name: "Stop when ansible_become_password is undefined"
   meta: end_play
-  when: ansible_become_password == "" or password_salt == "" or managing_user_password == "" or admin_email == ""
+  when: ansible_become_password == ""
+
+- name: "Stop when password_salt is undefined"
+  meta: end_play
+  when: password_salt == ""
+
+- name: "Stop when managing_user_password is undefined"
+  meta: end_play
+  when: managing_user_password == ""
+
+- name: "Stop when admin_email is undefined"
+  meta: end_play
+  when: admin_email == ""
