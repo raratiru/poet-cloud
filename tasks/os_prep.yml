@@ -214,3 +214,8 @@
     line: 'services+="systemd-timesyncd "'
     state: present
   when: services.stat.exists == True
+
+- name: Set ".local/bin" to PATH
+  lineinfile:
+    path: "{{ ansible_user_dir }}/.bashrc"
+    line: "export PATH=\"$HOME/.local/bin:$PATH\""
