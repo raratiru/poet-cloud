@@ -193,13 +193,11 @@
     state: restarted
   become: True
 
-- name: "Create necessary system directories"
+- name: "Create .local/bin directory, .profile sets the path automatically"
   file:
-    path: "{{ item }}"
+    path: "{{ ansible_user_dir }}/.local/bin"
     state: directory
-    mode: 0755
-  with_items:
-    - "~/.virtualenvs/"
+    mode: 0750
 
 - name: Check if report script exists exists
   stat:
@@ -214,8 +212,3 @@
     line: 'services+="systemd-timesyncd "'
     state: present
   when: services.stat.exists == True
-
-- name: Set ".local/bin" to PATH
-  lineinfile:
-    path: "{{ ansible_user_dir }}/.bashrc"
-    line: "export PATH=\"$HOME/.local/bin:$PATH\""
