@@ -59,19 +59,19 @@
   become: True
   template:
     src: enable_nginx_maintenance.j2
-    dest: "/usr/local/bin/enable_nginx_maintenance"
+    dest: "{{ ansible_user_dir }}/.local/bin"
     owner: "{{ ansible_ssh_user }}"
-    group: "{{ ansible_ssh_user }}"
-    mode: "0700"
+    group: "nginx"
+    mode: "0750"
 
 - name: "Nginx: Copy Maintenance Script Disable"
   become: True
   template:
     src: disable_nginx_maintenance.j2
-    dest: "/usr/local/bin/disable_nginx_maintenance"
+    dest: "{{ ansible_user_dir }}/.local/bin"
     owner: "{{ ansible_ssh_user }}"
-    group: "{{ ansible_ssh_user }}"
-    mode: "0700"
+    group: "nginx"
+    mode: "0750"
 
 - name: "Change home directory permissions and group"
   become: True
