@@ -34,6 +34,7 @@ Role to manage a cloud instance
     - Nginx:
 
       - `server_domain_name`
+      - `django_admin_path`
       - `server_alias_domain_name` [optional]
 
     - Certbot

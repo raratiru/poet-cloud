@@ -5,4 +5,4 @@
 
 - name: "Stop when Nginx environment variables are undefined"
   meta: end_play
-  when: server_domain_name == "" or domains == ""
+  when: server_domain_name == "" or domains == "" or django_admin_path == ""
