@@ -13,11 +13,11 @@ Role to manage a cloud instance
 
 ### Necessary variables
 
-- `ansible_become_password` - env `POET_CLOUD_BECOME_PASS`
-- `password_salt` - env `POET_CLOUD_PASSWORD_SALT`
-- `managing_user_password` - env `POET_CLOUD_MANAGING_USER_PASS`
-- `admin_email` - env `POET_DJANGO_ADMIN_EMAIL`
-- `managing_user` - env `POET_CLOUD_MANAGING_USER`
+- `ansible_become_password`
+- `password_salt`
+- `managing_user_password`
+- `admin_email`
+- `managing_user`
 
 ## tags
 
@@ -40,3 +40,9 @@ Role to manage a cloud instance
     - Certbot
 
       - `domains` (comma separated, the first, is main domain)
+
+    - Start Maintenance
+      - `DOTENV_FILE_PATH` (Environment Variable)
+      - `POET_PROJECT_PATH`  (Environment Variable)
+
+    - Conclude Maintenance

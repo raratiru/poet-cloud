@@ -1,6 +1,6 @@
 ---
 - import_tasks: verify_variables.yml
-  tags: [never, compact, new_instance]
+  tags: [never, compact, new_instance, start_maintenance]
 
 - import_tasks: verify_extra_variables.yml
   tags: [never, compact]
@@ -35,3 +35,9 @@
 
 - import_tasks: certbot.yml
   tags: [never, compact]
+
+- import_tasks: start_maintenance.yml
+  tags: [never, start_maintenance]
+
+- import_tasks: conclude_maintenance.yml
+  tags: [never, conclude_maintenance]

@@ -47,15 +47,6 @@
     group: nginx
     mode: "0750"
 
-# - name: "Nginx: Copy Maintenance page"
-#   become: True
-#   copy:
-#     src: maintain.html
-#     dest: "{{ ansible_user_dir }}/00_server/{{ server_domain_name }}/cellar/rubble/maintainance.html"
-#     owner: "{{ ansible_ssh_user }}"
-#     group: nginx
-#     mode: "0640"
-
 - name: "Nginx: Create .local/bin directory"
   become: True
   file:
@@ -63,25 +54,34 @@
     state: directory
     owner: "{{ ansible_ssh_user }}"
     group: "{{ ansible_ssh_user }}"
-    mode: "0750"
+    mode: "0700"
 
 - name: "Nginx: Copy Maintenance Script Enable"
   become: True
   template:
-    src: enable_nginx_maintenance.j2
+    src: start_maintenance.j2
     dest: "{{ ansible_user_dir }}/.local/bin"
     owner: "{{ ansible_ssh_user }}"
-    group: "nginx"
-    mode: "0750"
+    group: "{{ ansible_ssh_user }}"
+    mode: "0700"
 
-- name: "Nginx: Copy Maintenance Script Disable"
+- name: "Nginx: Copy Maintenance Script Conclude"
   become: True
   template:
-    src: disable_nginx_maintenance.j2
+    src: conclude_maintenance.j2
     dest: "{{ ansible_user_dir }}/.local/bin"
     owner: "{{ ansible_ssh_user }}"
-    group: "nginx"
-    mode: "0750"
+    group: "{{ ansible_ssh_user }}"
+    mode: "0700"
+
+- name: "Nginx: Copy Make Ready Script"
+  become: True
+  template:
+    src: make_ready.j2
+    dest: "{{ ansible_user_dir }}/.local/bin"
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
+    mode: "0700"
 
 - name: "Change home directory permissions and group"
   become: True

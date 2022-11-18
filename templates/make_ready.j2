@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# This is run after environment variables are activated
+
+is_main_server="$1"
+
+. poet_server "${POET_PROJECT}p"
+
+cd "$POET_PROJECT_DJANGO_PATH" || exit
+{{ ansible_user_dir }}/.local/bin/poetry run ./manage.py collectstatic --noinput --clear -i scss
+
+# Migrate once when updating the main web site instance
+[ -n "$main_server" ] && {{ ansible_user_dir }}/.local/bin/poetry run ./manage.py migrate
