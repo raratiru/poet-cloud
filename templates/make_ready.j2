@@ -4,7 +4,7 @@
 
 is_main_server="$1"
 
-. poet_server "${POET_PROJECT}p"
+. {{ ansible_user_dir }}/.local/bin/poet_server "${POET_PROJECT}p"
 
 cd "$POET_PROJECT_DJANGO_PATH" || exit
 {{ ansible_user_dir }}/.local/bin/poetry run ./manage.py collectstatic --noinput --clear -i scss

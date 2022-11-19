@@ -60,7 +60,7 @@
   become: True
   template:
     src: start_maintenance.j2
-    dest: "{{ ansible_user_dir }}/.local/bin"
+    dest: "{{ ansible_user_dir }}/.local/bin/start_maintenance"
     owner: "{{ ansible_ssh_user }}"
     group: "{{ ansible_ssh_user }}"
     mode: "0700"
@@ -69,7 +69,7 @@
   become: True
   template:
     src: conclude_maintenance.j2
-    dest: "{{ ansible_user_dir }}/.local/bin"
+    dest: "{{ ansible_user_dir }}/.local/bin/conclude_maintenance"
     owner: "{{ ansible_ssh_user }}"
     group: "{{ ansible_ssh_user }}"
     mode: "0700"
@@ -78,7 +78,7 @@
   become: True
   template:
     src: make_ready.j2
-    dest: "{{ ansible_user_dir }}/.local/bin"
+    dest: "{{ ansible_user_dir }}/.local/bin/poet_server_make_ready"
     owner: "{{ ansible_ssh_user }}"
     group: "{{ ansible_ssh_user }}"
     mode: "0700"

@@ -41,8 +41,7 @@ Role to manage a cloud instance
 
       - `domains` (comma separated, the first, is main domain)
 
-    - Start Maintenance
-      - `DOTENV_FILE_PATH` (Environment Variable)
-      - `POET_PROJECT_PATH`  (Environment Variable)
-
-    - Conclude Maintenance
+    - Upstream Maintenance
+      - `ANSIBLE_DOTENV_FILE_PATH` (Environment Variable)
+      - `POET_PROJECT_PATH` (Environment Variable)
+      - `ANSIBLE_LOCAL_PROJECT_PATH` (Environment Variable)

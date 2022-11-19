@@ -1,8 +1,0 @@
----
-- name: "Copy .env to production"
-  copy:
-    src: "{{ lookup('env', 'DOTENV_FILE_PATH') }}"
-    dest: "{{ lookup('env', 'POET_PROJECT_PATH') }}/.env"
-    owner: "{{ ansible_ssh_user }}"
-    group: "{{ ansible_ssh_user }}"
-    mode: 0400
