@@ -21,4 +21,14 @@
 
 - name: "Conclude Maintenance Mode"
   shell:
-    cmd: "{{ ansible_user_dir }}/.local/bin/conclude_maintenance"
+    cmd: /usr/bin/screen -S maintenance -d -m "{{ ansible_user_dir }}/.local/bin/conclude_maintenance"
+
+- name: Attention
+  debug:
+    msg: "Login to the server and run `screen -r maintenance` as root to see how the script goes."
+
+# - name: Make poet_server to Wait until screen is over
+#   become: True
+#   wait_for:
+#     path: /opt/docker/ready
+#     timeout: 800
