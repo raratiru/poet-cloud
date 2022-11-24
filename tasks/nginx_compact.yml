@@ -56,7 +56,7 @@
     group: "{{ ansible_ssh_user }}"
     mode: "0700"
 
-- name: "Nginx: Copy Maintenance Script Enable"
+- name: "Nginx: Copy Start Maintenance Script"
   become: True
   template:
     src: start_maintenance.j2
@@ -82,6 +82,24 @@
     owner: "{{ ansible_ssh_user }}"
     group: "{{ ansible_ssh_user }}"
     mode: "0700"
+
+- name: "Nginx: Copy Stop Maintenance Script"
+  become: True
+  template:
+    src: stop_maintenance.j2
+    dest: "{{ ansible_user_dir }}/.local/bin/stop_maintenance"
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
+    mode: "0700"
+
+- name: "Nginx: Copy Gunicorn Service"
+  become: True
+  template:
+    src: gunicorn.service.j2
+    dest: /etc/systemd/system/gunicorn.service
+    owner: root
+    group: "{{ ansible_ssh_user }}"
+    mode: "0640"
 
 - name: "Change home directory permissions and group"
   become: True

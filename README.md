@@ -36,6 +36,8 @@ Role to manage a cloud instance
       - `server_domain_name`
       - `django_admin_path`
       - `server_alias_domain_name` [optional]
+      - nginx_compact:
+        - `POET_PROJECT` (Environment Variable)
 
     - Certbot
 
