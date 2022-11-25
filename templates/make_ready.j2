@@ -10,4 +10,4 @@ cd "$POET_PROJECT_DJANGO_PATH" || exit
 {{ ansible_user_dir }}/.local/bin/poetry run ./manage.py collectstatic --noinput --clear -i scss
 
 # Migrate once when updating the main web site instance
-[ -n "$main_server" ] && {{ ansible_user_dir }}/.local/bin/poetry run ./manage.py migrate
+[ -n "$is_main_server" ] && {{ ansible_user_dir }}/.local/bin/poetry run ./manage.py migrate

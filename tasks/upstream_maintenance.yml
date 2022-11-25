@@ -1,4 +1,13 @@
 ---
+- name: Verify that project exists by checking the cellar directory
+  stat:
+    path: "{{ lookup('env', 'POET_PROJECT_PATH') }}/cellar"
+  register: register_project_exists
+
+- name: "Push upstream if project does not exist"
+  local_action: shell cd {{ lookup('env', "ANSIBLE_LOCAL_PROJECT_PATH" )}} && git push upstream
+  when: not register_project_exists.stat.exists
+
 - name: "Start Maintenance Mode after waiting for the countdown notification to finish"
   shell:
     cmd: "{{ ansible_user_dir }}/.local/bin/start_maintenance"
