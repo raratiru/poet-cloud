@@ -1,0 +1,40 @@
+---
+- name: "Push upstream"
+  local_action: shell cd {{ lookup('env', "ANSIBLE_LOCAL_PROJECT_PATH" )}} && git push upstream
+
+- name: Copy poet files
+  become: True
+  unarchive:
+    src: "{{ lookup('env', 'HOME') }}/.local/bin/poet.tar.gz"
+    dest: "{{ ansible_user_dir }}/.local/bin/"
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
+    mode: 0700
+
+- name: "Copy .env to production"
+  copy:
+    src: "{{ lookup('env', 'ANSIBLE_DOTENV_FILE_PATH') }}"
+    dest: "{{ lookup('env', 'POET_PROJECT_PATH') }}/.env"
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
+    mode: 0400
+
+- name: Touch the cue file
+  ansible.builtin.file:
+    path: /tmp/ansible_poet_server
+    state: touch
+
+- name: "Initialize project"
+  shell:
+    cmd: /usr/bin/screen -S initialization -d -m "{{ ansible_user_dir }}/.local/bin/initialize_project"
+
+- name: Attention
+  debug:
+    msg: "Login to the server and run `screen -r initialization` to see how the script goes."
+
+- name: Waiting for initialization to conclude
+  become: True
+  wait_for:
+    path: /tmp/ansible_poet_server
+    timeout: 800
+    state: absent

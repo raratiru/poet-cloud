@@ -38,10 +38,14 @@ Role to manage a cloud instance
       - `server_alias_domain_name` [optional]
       - nginx_compact:
         - `POET_PROJECT` (Environment Variable)
+        - `POET_CLOUD_SERVER_DOMAIN_NAME` (Environment Variable)
 
     - Certbot
 
       - `domains` (comma separated, the first, is main domain)
+    - Upstream Initialization
+      - `POET_PROJECT` (Environment Variable)
+      - `POET_CLOUD_SERVER_DOMAIN_NAME` (Environment Variable)
 
     - Upstream Maintenance
       - `ANSIBLE_DOTENV_FILE_PATH` (Environment Variable)

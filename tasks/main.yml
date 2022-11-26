@@ -3,10 +3,7 @@
   tags: [never, compact, new_instance]
 
 - import_tasks: verify_extra_variables.yml
-  tags: [never, compact, upstream_maintenance]
-
-- import_tasks: verify_maintenance_variables.yml
-  tags: [never, upstream_maintenance]
+  tags: [never, compact]
 
 - import_tasks: new_instance.yml
   tags: [never, new_instance]
@@ -41,3 +38,6 @@
 
 - import_tasks: upstream_maintenance.yml
   tags: [never, upstream_maintenance]
+
+- import_tasks: upstream_initialization.yml
+  tags: [never, upstream_initialization]

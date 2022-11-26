@@ -1,22 +1,21 @@
 ---
+- name: "Stop when maintenance environment variables are undefined"
+  meta: end_play
+  when: lookup('env', 'ANSIBLE_DOTENV_FILE_PATH') == "" or lookup('env', 'POET_PROJECT_PATH') == "" or lookup('env', 'ANSIBLE_LOCAL_PROJECT_PATH') == ""
+
 - name: Verify that project exists by checking the cellar directory
   stat:
     path: "{{ lookup('env', 'POET_PROJECT_PATH') }}/cellar"
-  register: register_project_exists
+  register: register_project
 
-- name: "Push upstream if project does not exist"
-  local_action: shell cd {{ lookup('env', "ANSIBLE_LOCAL_PROJECT_PATH" )}} && git push upstream
-  when: not register_project_exists.stat.exists
+- name: Verify that the virtual environment folder exists
+  stat:
+    path: "{{ lookup('env', 'POET_PROJECT_PATH') }}/.venv"
+  register: register_venv
 
-- name: "Start Maintenance Mode after waiting for the countdown notification to finish"
-  shell:
-    cmd: "{{ ansible_user_dir }}/.local/bin/start_maintenance"
-
-- name: "Stop Gunicorn"
-  become: True
-  ansible.builtin.service:
-    name: gunicorn
-    state: stopped
+- name: "Stop when the project is not initialized"
+  meta: end_play
+  when: not register_project.stat.exists and not register_venv.stat.exists
 
 - name: Copy poet files
   become: True
@@ -34,6 +33,16 @@
     owner: "{{ ansible_ssh_user }}"
     group: "{{ ansible_ssh_user }}"
     mode: 0400
+
+- name: "Start Maintenance Mode after waiting for the countdown notification to finish"
+  shell:
+    cmd: "{{ ansible_user_dir }}/.local/bin/start_maintenance"
+
+- name: "Stop Gunicorn"
+  become: True
+  ansible.builtin.service:
+    name: gunicorn
+    state: stopped
 
 - name: "Push upstream"
   local_action: shell cd {{ lookup('env', "ANSIBLE_LOCAL_PROJECT_PATH" )}} && git push upstream

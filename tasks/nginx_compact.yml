@@ -92,6 +92,15 @@
     group: "{{ ansible_ssh_user }}"
     mode: "0700"
 
+- name: "Nginx: Copy Initialization Script"
+  become: True
+  template:
+    src: initialize_project.j2
+    dest: "{{ ansible_user_dir }}/.local/bin/initialize_project"
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
+    mode: "0700"
+
 - name: "Nginx: Copy Gunicorn Service"
   become: True
   template:

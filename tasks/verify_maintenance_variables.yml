@@ -1,4 +1,0 @@
----
-- name: "Stop when maintenance environment variables are undefined"
-  meta: end_play
-  when: lookup('env', 'ANSIBLE_DOTENV_FILE_PATH') == "" or lookup('env', 'POET_PROJECT_PATH') == ""
