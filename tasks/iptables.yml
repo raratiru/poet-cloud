@@ -18,7 +18,7 @@
     mode: 0700
   with_items:
     - "ipv4.rules"
-    # - "ipv6.rules"
+    - "ipv6.rules"
 
 - name: Copy Files and Templates
   become: True
@@ -34,7 +34,7 @@
         - "firewall.start"
         - "pre-firewall.start"
         - "pre-ipv4.rules"
-        # - "pre-ipv6.rules"
+        - "pre-ipv6.rules"
     - name: Copy service files
       copy:
         src: "{{ item }}"
