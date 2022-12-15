@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# *** Check if file is sourced
+(return 0 2>/dev/null) && poet_sourced=1 || poet_sourced=0
+
+if [ "$poet_sourced" -eq 0 ]; then
+    echo "This script must be sourced"
+    exit 1
+fi
+
+cd "$HOME"/00_server/{{ lookup('env', 'POET_CLOUD_SERVER_DOMAIN_NAME') }} || return 1
+
+eval "$(
+    "$HOME"/.local/bin/shdotenv \
+        -e .env
+)"
+
+[ -z "$POET_MINOR_PYTHON_VERSION" ] && {
+    echo "* 'POET_MINOR_PYTHON_VERSION' is not set"
+    return 1
+}
+
+[ -z "$POET_DJANGO" ] && {
+    echo "* This is not a Django environment, quitting"
+    return 1
+}
+
+echo "* Initialized \"$POET_ENV\" environment"

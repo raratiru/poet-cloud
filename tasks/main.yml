@@ -33,6 +33,9 @@
 - import_tasks: nginx_compact.yml
   tags: [never, compact]
 
+- import_tasks: copy_scripts.yml
+  tags: [never, compact]
+
 - import_tasks: certbot.yml
   tags: [never, compact]
 
