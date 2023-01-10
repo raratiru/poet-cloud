@@ -62,6 +62,15 @@
     group: "{{ ansible_ssh_user }}"
     mode: "0700"
 
+- name: "Copy Database Backup Script"
+  become: True
+  template:
+    src: backup_database.j2
+    dest: "{{ ansible_user_dir }}/.local/bin/backup_database"
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
+    mode: "0700"
+
 - name: "Copy Gunicorn Service"
   become: True
   template:

@@ -1,0 +1,27 @@
+#!/bin/bash
+
+. poet_start
+
+# Define the filename
+filename="$POET_DJANGO_DATABASE_MAIN_NAME-$(date +%Y%m%d.%H%M)-$POET_VERSION-sql"
+
+# Export the database
+export PGPASSWORD="$POET_DJANGO_DATABASE_MAIN_PASSWORD" && {
+    pg_dump --compress=9 --no-owner --no-privileges --format=c \
+        -U "$POET_DJANGO_DATABASE_MAIN_USER" "$POET_DJANGO_DATABASE_MAIN_NAME" \
+        -f "$POET_PROJECT_PATH"/cellar/backup/database/"$filename".dump
+}
+
+# Compress the created file
+/bin/tar -czf \
+    "$POET_PROJECT_PATH"/cellar/backup/database/"$filename".dump.tar.gz \
+    "$POET_PROJECT_PATH"/cellar/backup/database/"$filename".dump
+
+# Tidy the new file
+rm -f "$POET_PROJECT_PATH"/cellar/backup/database/"$filename".dump
+chown {{ ansible_ssh_user }}:{{ ansible_ssh_user }} \
+    "$POET_PROJECT_PATH"/cellar/backup/database/"$filename".dump.tar.gz
+chmod 600 "$POET_PROJECT_PATH"/cellar/backup/database/"$filename".dump.tar.gz
+
+# Remove backups older than a month
+find ./ -type f -mtime +30 -exec rm -f {} \;

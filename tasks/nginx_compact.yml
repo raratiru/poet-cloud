@@ -32,6 +32,18 @@
       location ~ /{{ django_admin_path }} {
         try_files $uri $uri/ @proxy;
       }
+      location /static {
+        try_files $uri $uri/ =404;
+      }
+      location /media {
+        try_files $uri $uri/ =404;
+      }
+      location ~ /backstage {
+        try_files $uri $uri/ @proxy;
+      }
+      location ~ /inhouse {
+        try_files $uri $uri/ @proxy;
+      }
 
 - name: "Nginx: Create html directory for this server"
   command: "git init {{ ansible_user_dir }}/00_server/{{ server_domain_name }}"
