@@ -79,8 +79,7 @@
     special_time: daily
     job: "/usr/local/bin/chkrootkit"
 
-
-4- name: Daily Database Backup
+- name: Daily Database Backup
   ansible.builtin.cron:
     name: "Perform Database Backup"
     special_time: daily
