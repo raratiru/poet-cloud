@@ -83,4 +83,4 @@
   ansible.builtin.cron:
     name: "Perform Database Backup"
     special_time: daily
-    job: "{{ ansible_user_dir }}/.local/bin/backup_database || echo "Subject:The database backup has failed" | /usr/sbin/sendmail -F "Charlie Root" {{ admin_email }}'
+    job: "{{ ansible_user_dir }}/.local/bin/backup_database || echo \"Subject:The database backup has failed\" | /usr/sbin/sendmail -F \"Charlie Root\" {{ admin_email }}"
