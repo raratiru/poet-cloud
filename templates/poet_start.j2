@@ -8,7 +8,16 @@ if [ "$poet_sourced" -eq 0 ]; then
     exit 1
 fi
 
+install_shdotenv() {
+    mkdir -p "$HOME"/.local/bin
+    wget https://github.com/ko1nksm/shdotenv/releases/latest/download/shdotenv \
+        -O "$HOME"/.local/bin/shdotenv
+    chmod +x "$HOME"/.local/bin/shdotenv
+}
+
 cd "$HOME"/00_server/{{ lookup('env', 'POET_CLOUD_SERVER_DOMAIN_NAME') }} || return 1
+
+[ ! -f "$HOME"/.local/bin/shdotenv ] && install_shdotenv
 
 eval "$(
     "$HOME"/.local/bin/shdotenv \
