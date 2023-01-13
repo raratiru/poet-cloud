@@ -1,7 +1,7 @@
 #!/bin/bash
 
-cd {{ ansible_user_dir }}/00_server/{{ server_domain_name }}
-eval "$({{ ansible_user_dir }}/.local/bin/shdotenv --overload)"
+. "$HOME"/.profile
+. "$HOME"/.local/bin/poet_start
 
 MINUTES_LATER=$(date --date "$(date +%Y-%m-%dT%H:%M:%S%:z) +2 min" --iso-8601=minutes)
 
@@ -9,6 +9,6 @@ echo \
   "from django.core.cache import cache; cache.set(\"maintenance_alert\", \"$MINUTES_LATER\")" \
   | {{ ansible_user_dir }}/.local/bin/poetry run ./manage.py shell
 
-sleep 121
+sleep 69
 
 cp {{ ansible_user_dir }}/00_server/{{ server_domain_name }}/cellar/rubble/maintenance.html {{ ansible_user_dir }}/00_server/{{ server_domain_name }}/www/maintenance.html
