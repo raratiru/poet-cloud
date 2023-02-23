@@ -151,7 +151,10 @@
     - name: Clean tmp & set locales
       shell: |
         /bin/echo -e "#! /bin/bash\r\n\r\n/usr/bin/find /tmp/ -type f -mtime +15 -exec rm -f {} \;" > /etc/cron.daily/tmp_cleanup
-        localedef -i en_US -f UTF-8 en_US.utf8
+        # localedef -i en_US -f UTF-8 en_US.utf8
+        sed -i '/^#.* el_GR.UTF-8* /s/^# //' /etc/locale.gen
+        sed -i '/^#.* en_US.UTF-8* /s/^# //' /etc/locale.gen
+        /sbin/locale-gen
     - name: Configure locales
       lineinfile:
         dest: "/etc/default/locale"
