@@ -3,6 +3,10 @@
 . "$HOME"/.profile
 . poet_start
 
+current_dir="$(pwd)"
+mkdir -p "$POET_PROJECT_PATH"/cellar/backup/
+cd "$POET_PROJECT_PATH"/cellar/backup/
+
 # Define the filename
 filename="$POET_DJANGO_DATABASE_MAIN_NAME-$(date +%Y%m%d.%H%M)-$POET_VERSION-sql"
 
@@ -25,4 +29,6 @@ chown {{ ansible_ssh_user }}:{{ ansible_ssh_user }} \
 chmod 600 "$POET_PROJECT_PATH"/cellar/backup/database/"$filename".dump.tar.gz
 
 # Remove backups older than a month
-find ./ -type f -mtime +30 -exec rm -f {} \;
+find ./ -type f -mtime +15 -exec rm -f {} \;
+
+cd "$current_dir"
