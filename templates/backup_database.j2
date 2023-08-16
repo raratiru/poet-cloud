@@ -29,6 +29,6 @@ chown {{ ansible_ssh_user }}:{{ ansible_ssh_user }} \
 chmod 600 "$POET_PROJECT_PATH"/cellar/backup/database/"$filename".dump.tar.gz
 
 # Remove backups older than a month
-find ./ -type f -mtime +15 -exec rm -f {} \;
+find ./ -type f -not -path "./.gitkeep" -mtime +10 -exec rm -f {} \;
 
 cd "$current_dir"
