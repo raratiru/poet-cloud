@@ -33,7 +33,7 @@
             "libgeoip1",
             "geoip-bin",
             "postgis",
-            "python3-psycopg2",
+            "python3-psycopg",
           ]
         state: present
   become: True
