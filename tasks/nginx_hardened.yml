@@ -5,12 +5,20 @@
     name: ["curl", "gnupg2", "ca-certificates", "lsb-release"]
     state: present
 
+# - name: "Nginx: Add the signing key, if not present"
+#   become: True
+#   apt_key:
+#     id: 573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62
+#     url: https://nginx.org/keys/nginx_signing.key
+#     state: present
+
 - name: "Nginx: Add the signing key, if not present"
   become: True
-  apt_key:
-    id: 573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62
-    url: https://nginx.org/keys/nginx_signing.key
-    state: present
+  get_url:
+    url: "https://nginx.org/keys/nginx_signing.key"
+    dest: "/etc/apt/trusted.gpg.d/nginx.asc"
+    mode: '0644'
+    force: true
 
 - name: "Nginx: Add APT deb repository"
   become: True
