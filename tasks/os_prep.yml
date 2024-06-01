@@ -72,12 +72,12 @@
   block:
     - name: Chkrootkit run daily
       lineinfile:
-        dest: "/etc/chkrootkit.conf"
+        dest: "/etc/chkrootkit/chkrootkit.conf"
         regexp: "RUN_DAILY="
         line: 'RUN_DAILY="true"'
     - name: Chkrootkit enable daily diffs
       lineinfile:
-        dest: "/etc/chkrootkit.conf"
+        dest: "/etc/chkrootkit/chkrootkit.conf"
         regexp: "DIFF_MODE="
         line: 'DIFF_MODE="true"'
 
