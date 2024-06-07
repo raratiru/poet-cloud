@@ -91,6 +91,7 @@
 -A net_output -p tcp -m tcp --dport 80 -m comment --comment "Allow outgoing web" -j ACCEPT
 -A net_output -p tcp -m tcp --dport 443 -m comment --comment "Allow outgoing secure web" -j ACCEPT
 -A net_output -p tcp -m tcp --dport 22 -m comment --comment "Allow SSH" -j log_ssh
+-A net_output -p tcp -m tcp --dport 587 -m comment --comment "Allow outgoing to Email Server" -j ACCEPT
 -A loc_input -j all_input
 -A loc_output -j all_output
 -A loc_output -p tcp -m tcp --dport 22 -m comment --comment "Allow SSH" -j log_ssh
