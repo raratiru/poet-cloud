@@ -20,6 +20,10 @@
       apt:
         name: "haveged"
         state: present
+    - name: Install rsync
+      apt:
+        name: "rsync"
+        state: present
   become: True
 
 - name: Set root password
