@@ -20,6 +20,10 @@
       apt:
         name: "haveged"
         state: present
+    - name: Install passlib
+      apt:
+        name: "passlib"
+        state: present
   become: True
 
 - name: Set root password
