@@ -1,4 +1,0 @@
-#!/bin/sh
-
-/sbin/iptables-restore /etc/iptables/pre-ipv4.rules
-# /sbin/ip6tables-restore /etc/iptables/pre-ipv6.rules

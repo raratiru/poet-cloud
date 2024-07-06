@@ -8,23 +8,49 @@
     group: root
     mode: 0700
 
-- name: copy rules
+- name: Settle ipv4 rules
   become: True
-  template:
-    src: "{{ item }}"
-    dest: "/etc/iptables/{{ item }}"
-    owner: root
-    group: root
-    mode: 0700
-  with_items:
-    - "ipv4.rules"
-    - "ipv6.rules"
+  block:
+    - name: Copy ipv4 rules
+      template:
+        src: "ipv4.rules"
+        dest: "/etc/iptables/ipv4.rules"
+        owner: root
+        group: root
+        mode: 0700
+    - name: Copy pre-ipv4 rules
+      copy:
+        src: "pre-ipv4.rules"
+        dest: "/etc/iptables/pre-ipv4.rules"
+        owner: root
+        group: root
+        mode: 0700
+  when: ansible_facts["default_ipv4"].keys()|length > 0
+
+- name: Settle ipv6 rules
+  become: True
+  block:
+    - name: Copy ipv6 rules
+      template:
+        src: "ipv6.rules"
+        dest: "/etc/iptables/ipv6.rules"
+        owner: root
+        group: root
+        mode: 0700
+    - name: Copy pre-ipv6 rules
+      copy:
+        src: "pre-ipv6.rules"
+        dest: "/etc/iptables/pre-ipv6.rules"
+        owner: root
+        group: root
+        mode: 0700
+  when: ansible_facts["default_ipv6"].keys()|length > 0
 
 - name: Copy Files and Templates
   become: True
   block:
-    - name: Copy starting scripts
-      copy:
+    - name: Copy starting template scripts
+      template:
         src: "{{ item }}"
         dest: "/etc/iptables/{{ item }}"
         owner: root
@@ -33,8 +59,6 @@
       with_items:
         - "firewall.start"
         - "pre-firewall.start"
-        - "pre-ipv4.rules"
-        - "pre-ipv6.rules"
     - name: Copy service files
       copy:
         src: "{{ item }}"
