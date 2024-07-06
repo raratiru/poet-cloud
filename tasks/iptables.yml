@@ -51,7 +51,7 @@
   block:
     - name: Copy starting template scripts
       template:
-        src: "{{ item }}"
+        src: "{{ item }}.j2"
         dest: "/etc/iptables/{{ item }}"
         owner: root
         group: root
