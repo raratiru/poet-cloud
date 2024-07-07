@@ -1,4 +1,5 @@
 [DEFAULT]
+backend = systemd
 bantime = 172800
 findtime=3600
 maxretry = 3
@@ -9,4 +10,3 @@ ignoreip = 127.0.0.1/8 ::1 {{ ansible_facts.default_ipv4.address }} {% if 'addre
 enabled = true
 maxretry = 3
 filter = sshd
-logpath = /var/log/auth.log
