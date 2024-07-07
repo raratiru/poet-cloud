@@ -13,6 +13,7 @@ main_debian_packages:
     "git",
     "haveged",
     "htop",
+    "iptables",
     "libbz2-dev",
     "libffi-dev",
     "liblzma-dev",
