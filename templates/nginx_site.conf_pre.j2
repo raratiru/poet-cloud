@@ -48,12 +48,12 @@ server {
   }
 
   location / {
-{%- if nextcloud_admin_path is not defined or not nextcloud_admin_path %}
+{% if nextcloud_admin_path is not defined or not nextcloud_admin_path %}
     try_files $uri $uri/ =404;
   }
 
   location @proxy {
-{%- endif %}
+{% endif %}
     proxy_hide_header X-Powered-By;
     proxy_pass http://frontend_servers;
     proxy_set_header Host $http_host;
