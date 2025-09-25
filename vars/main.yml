@@ -31,6 +31,7 @@ main_debian_packages:
     "ncdu",
     "needrestart",
     "openssl",
+    "python3-systemd",
     "rkhunter",
     "rsync",
     "screen",
