@@ -4,10 +4,10 @@
 
 is_main_server="$1"
 
-. {{ ansible_user_dir }}/.local/bin/poet_server "${POET_PROJECT}p"
+. {{ ansible_facts["user_dir"] }}/.local/bin/poet_server "${POET_PROJECT}p"
 
 cd "$POET_PROJECT_DJANGO_PATH" || exit
-{{ ansible_user_dir }}/.local/bin/poetry run ./manage.py collectstatic --noinput --clear -i scss
+{{ ansible_facts["user_dir"] }}/.local/bin/poetry run ./manage.py collectstatic --noinput --clear -i scss
 
 # Migrate once when updating the main web site instance
-[ -n "$is_main_server" ] && {{ ansible_user_dir }}/.local/bin/poetry run ./manage.py migrate
+[ -n "$is_main_server" ] && {{ ansible_facts["user_dir"] }}/.local/bin/poetry run ./manage.py migrate

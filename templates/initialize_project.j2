@@ -1,3 +1,3 @@
 #!/bin/bash
 
-. {{ ansible_user_dir }}/.local/bin/poet_server {{ lookup('env', 'POET_PROJECT') }}p {{ lookup('env', 'POET_CLOUD_SERVER_DOMAIN_NAME') }}
+. {{ ansible_facts["user_dir"] }}/.local/bin/poet_server {{ lookup('env', 'POET_PROJECT') }}p {{ lookup('env', 'POET_CLOUD_SERVER_DOMAIN_NAME') }}

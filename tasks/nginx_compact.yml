@@ -37,14 +37,14 @@
       }
 
 - name: "Nginx: Create html directory for this server"
-  command: "git init {{ ansible_user_dir }}/00_server/{{ server_domain_name }}"
+  command: "git init {{ ansible_facts["user_dir"] }}/00_server/{{ server_domain_name }}"
   args:
-    creates: "{{ ansible_user_dir }}/00_server/{{ server_domain_name }}/.git/HEAD"
+    creates: "{{ ansible_facts["user_dir"] }}/00_server/{{ server_domain_name }}/.git/HEAD"
 
 - name: "Nginx: Change permissions and group of the server directory"
   become: True
   file:
-    path: "{{ ansible_user_dir }}/00_server/{{ server_domain_name }}"
+    path: "{{ ansible_facts["user_dir"] }}/00_server/{{ server_domain_name }}"
     state: directory
     owner: "{{ ansible_ssh_user }}"
     group: nginx

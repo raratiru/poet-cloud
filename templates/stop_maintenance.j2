@@ -5,6 +5,6 @@
 
 echo \
   "from django.core.cache import cache; cache.delete(\"maintenance_alert\")" \
-  | {{ ansible_user_dir }}/.local/bin/poetry run ./manage.py shell
+  | {{ ansible_facts["user_dir"] }}/.local/bin/poetry run ./manage.py shell
 
-rm -f {{ ansible_user_dir }}/00_server/{{ server_domain_name }}/www/maintenance.html
+rm -f {{ ansible_facts["user_dir"] }}/00_server/{{ server_domain_name }}/www/maintenance.html

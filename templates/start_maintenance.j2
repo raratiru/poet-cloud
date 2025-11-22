@@ -7,8 +7,8 @@ MINUTES_LATER=$(date --date "$(date +%Y-%m-%dT%H:%M:%S%:z) +2 min" --iso-8601=mi
 
 echo \
   "from django.core.cache import cache; cache.set(\"maintenance_alert\", \"$MINUTES_LATER\")" \
-  | {{ ansible_user_dir }}/.local/bin/poetry run ./manage.py shell
+  | {{ ansible_facts["user_dir"] }}/.local/bin/poetry run ./manage.py shell
 
 sleep 69
 
-cp {{ ansible_user_dir }}/00_server/{{ server_domain_name }}/cellar/rubble/maintenance.html {{ ansible_user_dir }}/00_server/{{ server_domain_name }}/www/maintenance.html
+cp {{ ansible_facts["user_dir"] }}/00_server/{{ server_domain_name }}/cellar/rubble/maintenance.html {{ ansible_facts["user_dir"] }}/00_server/{{ server_domain_name }}/www/maintenance.html
