@@ -21,7 +21,7 @@
   become: True
   unarchive:
     src: "{{ lookup('env', 'HOME') }}/.local/bin/poet.tar.gz"
-    dest: "{{ ansible_facts["user_dir"] }}/.local/bin/"
+    dest: '{{ ansible_facts["user_dir"] }}/.local/bin/'
     owner: "{{ ansible_ssh_user }}"
     group: "{{ ansible_ssh_user }}"
     mode: 0700
@@ -36,7 +36,7 @@
 
 - name: "Start Maintenance Mode after waiting for the countdown notification to finish"
   shell:
-    cmd: "{{ ansible_facts["user_dir"] }}/.local/bin/start_maintenance"
+    cmd: '{{ ansible_facts["user_dir"] }}/.local/bin/start_maintenance'
 
 - name: "Stop Gunicorn"
   become: True
@@ -49,7 +49,7 @@
 
 - name: "Conclude Maintenance Mode"
   shell:
-    cmd: /usr/bin/screen -S maintenance -d -m "{{ ansible_facts["user_dir"] }}/.local/bin/conclude_maintenance"
+    cmd: /usr/bin/screen -S maintenance -d -m '{{ ansible_facts["user_dir"] }}/.local/bin/conclude_maintenance'
 
 - name: Attention
   debug:
@@ -64,7 +64,7 @@
 
 - name: "Stop Maintenance Mode"
   shell:
-    cmd: "{{ ansible_facts["user_dir"] }}/.local/bin/stop_maintenance"
+    cmd: '{{ ansible_facts["user_dir"] }}/.local/bin/stop_maintenance'
 
 - name: "Start and Enable Gunicorn"
   become: True

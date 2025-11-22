@@ -198,7 +198,7 @@
 
 - name: "Create .local/bin directory, .profile sets the path automatically"
   file:
-    path: "{{ ansible_facts["user_dir"] }}/.local/bin"
+    path: '{{ ansible_facts["user_dir"] }}/.local/bin'
     state: directory
     mode: 0750
 

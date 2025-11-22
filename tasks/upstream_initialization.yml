@@ -6,7 +6,7 @@
   become: True
   unarchive:
     src: "{{ lookup('env', 'HOME') }}/.local/bin/poet.tar.gz"
-    dest: "{{ ansible_facts["user_dir"] }}/.local/bin/"
+    dest: '{{ ansible_facts["user_dir"] }}/.local/bin/'
     owner: "{{ ansible_ssh_user }}"
     group: "{{ ansible_ssh_user }}"
     mode: 0700
@@ -26,7 +26,7 @@
 
 - name: "Initialize project"
   shell:
-    cmd: /usr/bin/screen -S initialization -d -m "{{ ansible_facts["user_dir"] }}/.local/bin/initialize_project"
+    cmd: /usr/bin/screen -S initialization -d -m '{{ ansible_facts["user_dir"] }}/.local/bin/initialize_project'
 
 - name: Attention
   debug:
