@@ -23,12 +23,12 @@
 - name: "Nginx: Add APT deb repository"
   become: True
   apt_repository:
-    repo: "deb [arch=amd64] http://nginx.org/packages/debian/ {{ ansible_distribution_release }} nginx"
+    repo: "deb [arch=amd64] http://nginx.org/packages/debian/ {{ ansible_facts['distribution_release'] }} nginx"
 
 - name: "Nginx: Add APT deb-src repository"
   become: True
   apt_repository:
-    repo: "deb-src [arch=amd64] http://nginx.org/packages/debian/ {{ ansible_distribution_release }} nginx"
+    repo: "deb-src [arch=amd64] http://nginx.org/packages/debian/ {{ ansible_facts['distribution_release'] }} nginx"
 
 - name: "Nginx: Update and Install Nginx"
   become: True
