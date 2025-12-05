@@ -60,6 +60,7 @@
     mode: "0600"
 
 - name: Reboot
+  become: True
   ansible.builtin.reboot:
 
 - import_role:
