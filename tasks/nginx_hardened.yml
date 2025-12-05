@@ -41,6 +41,22 @@
         name: nginx
         state: present
 
+- name: "Create nginx site cache directory"
+  file:
+    path: '/var/cache/nginx/{{ server_domain_name }}'
+    state: directory
+    owner: nginx
+    group: root
+    mode: "0700"
+
+- name: copy 10.headers.conf
+  become: True
+  copy:
+    src: 10.headers.conf
+    dest: /etc/nginx/conf.d/10.headers.conf
+    owner: root
+    group: root
+    mode: "0600"
 
 - import_role:
     name: devsec.hardening.nginx_hardening
@@ -51,6 +67,25 @@
     nginx_remove_default_site: true
     nginx_large_client_header_buffers: 4 8k
     nginx_limit_conn: default 20
+    nginx_add_header: []
+
+- name: "Copy cache conf"
+  become: True
+  template:
+    src: 91.proxy_cache.j2
+    dest: /etc/nginx/conf.d/91.proxy_cache.conf
+    owner: root
+    group: root
+    mode: "0600"
+
+- name: copy 70.gzip.conf
+  become: True
+  copy:
+    src: 70.gzip.conf
+    dest: /etc/nginx/conf.d/70.gzip.conf
+    owner: root
+    group: root
+    mode: "0600"
 
 - name: "Nginx: Initialize nginx"
   become: True
