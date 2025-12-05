@@ -35,7 +35,7 @@
         etag off;
         if_modified_since off;
         add_header Cache-Control "public, max-age=1800";
-        include /etc/nginx/conf.d/10.headers.txt;
+        include /etc/nginx/conf.d/10.headers.conf;
       }
       location /media {
         try_files $uri $uri/ =404;
