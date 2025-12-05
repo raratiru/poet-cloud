@@ -225,7 +225,7 @@
     /sbin/swapon /swapfile
   args:
     executable: /bin/bash
-  when: ansible_facts["ansible_swaptotal_mb"] | int > 0
+  when: ansible_facts["swaptotal_mb"] | int > 0
 
 - name: Append swap configuration to fastab
   become: True
@@ -233,4 +233,4 @@
     dest: "/etc/fstab"
     line: "/swapfile none swap defaults 0 0"
     state: present
-  when: ansible_facts["ansible_swaptotal_mb"] | int > 0
+  when: ansible_facts["swaptotal_mb"] | int > 0
