@@ -42,6 +42,7 @@
         state: present
 
 - name: "Create nginx site cache directory"
+  become: True
   file:
     path: '/var/cache/nginx/{{ server_domain_name }}'
     state: directory
