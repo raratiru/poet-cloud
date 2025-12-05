@@ -10,3 +10,32 @@ ignoreip = 127.0.0.1/8 ::1 {{ ansible_facts.default_ipv4.address }} {% if 'addre
 enabled = true
 maxretry = 3
 filter = sshd
+
+[hey-stop]
+enabled = true
+port = http,https
+filter = hey-stop
+logpath = /var/log/nginx/access.log
+banaction=iptables-multiport[blocktype="REJECT --reject-with icmp-port-unreachable",protocol=all]
+# 25/min for 60 minutes = 1500 + 80 extra requests
+maxretry = 1580
+# 60 minutes
+findtime = 3600
+# As long as a big update
+bantime = 180
+# This solved the error. It uses pyi-something
+backend = auto
+# action = iptables[name=HTTP, port=http, protocol=tcp]  # Commented because it performs the default action
+
+[fuck-you]
+enabled = true
+port = http,https
+filter = hey-stop
+logpath = /var/log/nginx/access.log
+banaction=iptables-allports[blocktype=DROP,protocol=all]
+# 25/min for 180 minutes = 4500 + 1000
+maxretry = 6000
+# 180 minutes
+findtime = 10800
+bantime = 1800
+backend = auto

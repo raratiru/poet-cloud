@@ -95,6 +95,6 @@
 -A loc_input -j all_input
 -A loc_output -j all_output
 -A loc_output -p tcp -m tcp --dport 22 -m comment --comment "Allow SSH" -j log_ssh
--A web_server -m hashlimit --hashlimit-upto 8/min --hashlimit-burst 4 --hashlimit-mode srcip --hashlimit-name web_server_limit --hashlimit-htable-expire 300000 -j ACCEPT
+-A web_server -m hashlimit --hashlimit-upto 30/min --hashlimit-burst 15 --hashlimit-mode srcip --hashlimit-name web_server_limit --hashlimit-htable-expire 300000 -j ACCEPT
 -A web_server -j DROP
 COMMIT
