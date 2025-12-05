@@ -227,7 +227,7 @@
     executable: /bin/bash
   when: ansible_facts["swaptotal_mb"] | int == 0
 
-- name: Append swap configuration to fastab
+- name: Append swap configuration to fstab
   become: True
   lineinfile:
     dest: "/etc/fstab"
