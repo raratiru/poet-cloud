@@ -8,6 +8,15 @@
     mode: 0644
   become: True
 
+- name: Send hey-stop filter
+  become: True
+  copy:
+    src: hey-stop.conf
+    dest: /etc/fail2ban/filter.d/hey-stop.conf
+    owner: root
+    group: root
+    mode: 0644
+
 - name: Start fail2ban
   service:
     name: fail2ban
