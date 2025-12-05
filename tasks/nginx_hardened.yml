@@ -59,6 +59,9 @@
     group: root
     mode: "0600"
 
+- name: Reboot
+  ansible.builtin.reboot:
+
 - import_role:
     name: devsec.hardening.nginx_hardening
   become: True

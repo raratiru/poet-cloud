@@ -219,10 +219,10 @@
 - name: Create Swap File
   become: True
   ansible.builtin.shell: |
-    dd if=/dev/zero of=/swapfile bs=1M count=11450
+    /usr/bin/dd if=/dev/zero of=/swapfile bs=1M count=11450
     chmod 600 /swapfile
-    mkswap /swapfile
-    swapon /swapfile
+    /sbin/mkswap /swapfile
+    /sbin/swapon /swapfile
   args:
     executable: /bin/bash
 
