@@ -1,5 +1,6 @@
 ---
 - name: Do not allow root account lock for goodness shake!
+  become: True
   lineinfile:
     dest: /etc/security/faillock.conf
     regexp: '^(even_deny_root)'
