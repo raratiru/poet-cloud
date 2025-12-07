@@ -1,4 +1,12 @@
 ---
+- name: Do not allow root account lock for goodness shake!
+  lineinfile:
+    dest: /etc/security/faillock.conf
+    regexp: '^(even_deny_root)'
+    line: '# \1'
+    backrefs: yes
+    state: present
+
 - name: "Install bare metal necessary packages"
   apt:
     name: "{{ main_debian_packages }}"
