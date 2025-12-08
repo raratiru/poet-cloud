@@ -2,7 +2,15 @@
 - name: "Nginx: Install necessary dependencies"
   become: True
   apt:
-    name: ["curl", "gnupg2", "ca-certificates", "lsb-release"]
+    name:
+      [
+        "curl",
+        "gnupg2",
+        "ca-certificates",
+        "lsb-release",
+        "certbot",
+        "python3-certbot-nginx",
+      ]
     state: present
 
 # - name: "Nginx: Add the signing key, if not present"
@@ -17,7 +25,7 @@
   get_url:
     url: "https://nginx.org/keys/nginx_signing.key"
     dest: "/etc/apt/trusted.gpg.d/nginx.asc"
-    mode: '0644'
+    mode: "0644"
     force: true
 
 - name: "Nginx: Add APT deb repository"
@@ -44,7 +52,7 @@
 - name: "Create nginx site cache directory"
   become: True
   file:
-    path: '/var/cache/nginx/{{ server_domain_name }}'
+    path: "/var/cache/nginx/{{ server_domain_name }}"
     state: directory
     owner: nginx
     group: root

@@ -1,0 +1,19 @@
+---
+- name: Update and upgrade the OS
+  become: True
+  block:
+    - name: Update System
+      apt:
+        update_cache: yes
+    - name: Upgrade System
+      apt:
+        upgrade: full
+    - name: Dist-Upgrade System
+      apt:
+        upgrade: dist
+    - name: Remove useless packages from the cache
+      apt:
+        autoclean: yes
+    - name: Remove dependencies that are no longer required
+      apt:
+        autoremove: yes

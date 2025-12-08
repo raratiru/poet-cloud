@@ -37,7 +37,10 @@
   tags: [never, compact]
 
 - import_tasks: certbot.yml
-  tags: [never, compact]
+  tags: [never, certbot]
+
+- import_tasks: update_upgrade.yml
+  tags: [never, update_os]
 
 - import_tasks: upstream_maintenance.yml
   tags: [never, upstream_maintenance]
