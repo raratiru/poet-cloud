@@ -17,6 +17,16 @@
   meta: end_play
   when: not register_project.stat.exists and not register_venv.stat.exists
 
+- name: "Change permissions and group of the server directory"
+  become: True
+  ansible.builtin.file:
+    path: '{{ ansible_facts["user_dir"] }}/00_server/{{ server_domain_name }}'
+    state: directory
+    owner: "{{ ansible_ssh_user }}"
+    group: nginx
+    recurse: True
+    mode: "0750"
+
 - name: Copy poet files
   become: True
   unarchive:
