@@ -36,6 +36,13 @@ Role to manage a cloud instance
       - `server_domain_name`
       - `django_admin_path`
       - `server_alias_domain_name` [optional]
+      - `nginx_cache_keys_zone_size` [default: 10m]
+      - `nginx_cache_max_size` [default: 20g]
+      - `nginx_cache_inactive_time` [default: 180m]
+      - `nginx_use_proxy_cache` [defined & boolean]
+      - `nginx_cache_background_update` [defined & boolean]
+      - `nginx_cache_revalidate_with_conditional_headers` [defined & boolean]
+      - `nginx_proxy_server_port` [default: 8001]
       - nginx_compact:
         - `POET_PROJECT` (Environment Variable)
         - `POET_CLOUD_SERVER_DOMAIN_NAME` (Environment Variable)

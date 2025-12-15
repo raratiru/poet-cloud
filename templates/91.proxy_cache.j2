@@ -1,1 +1,1 @@
-proxy_cache_path /var/cache/nginx/{{ server_domain_name }} levels=1:2 keys_zone={{ server_domain_name }}_cache:10m max_size=20g inactive=180m use_temp_path=off;
+proxy_cache_path /var/cache/nginx/{{ server_domain_name }} levels=1:2 keys_zone={{ server_domain_name }}_cache:{{ nginx_cache_keys_zone_size | default('10m') }} max_size={{ nginx_cache_max_size | default('20g') }} inactive={{ nginx_cache_inactive_time | default('180m') }} use_temp_path=off;

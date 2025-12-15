@@ -5,10 +5,10 @@
 upstream frontend_servers {
   least_conn;
   zone frontend 64k;
-  server 127.0.0.1:8001 weight=1 fail_timeout=0s;
+  server 127.0.0.1:{{ nginx_proxy_server_port | default("8001") }} weight=1 fail_timeout=0s;
 }
 
-{% if server_alias_domain_name is defined %}
+{% if server_alias_domain_name is defined and server_alias_domain_name %}
 # Redirect any alias to server_domain_name
 server {
   listen 80;
@@ -52,20 +52,21 @@ server {
   }
 
   location / {
-{% if nextcloud_admin_path is not defined or not nextcloud_admin_path %}
-    try_files $uri $uri/ =404;
-  }
-
-  location @proxy {
-{% endif %}
+    {% if nginx_use_proxy_cache is defined and nginx_use_proxy_cache %}
     proxy_cache {{ server_domain_name }}_cache;
+    proxy_cache_lock on;
+    {% if nginx_cache_background_update is defined and nginx_cache_background_update %}
     proxy_cache_use_stale error timeout updating http_500 http_502
                           http_503 http_504;
     proxy_cache_background_update on;
+    {% endif %}
+    {% if nginx_cache_revalidate_with_conditional_headers is defined and nginx_cache_revalidate_with_conditional_headers %}
     proxy_cache_revalidate on;
-    proxy_cache_lock on;
+    {% endif %}
+    {% endif %}
     proxy_hide_header X-Powered-By;
     proxy_pass http://frontend_servers;
+    proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header Host $http_host;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
