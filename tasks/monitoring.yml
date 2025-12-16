@@ -78,9 +78,3 @@
     name: "Run chkrootkit"
     special_time: daily
     job: "/usr/local/bin/chkrootkit"
-
-- name: Daily Database Backup
-  ansible.builtin.cron:
-    name: "Perform Database Backup"
-    special_time: daily
-    job: '{{ ansible_facts["user_dir"] }}/.local/bin/backup_database || echo \"Subject:The database backup has failed\" | /usr/sbin/sendmail -F \"Charlie Root\" {{ admin_email }}'

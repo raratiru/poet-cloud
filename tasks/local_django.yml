@@ -1,0 +1,16 @@
+---
+- name: "Install libyajl2"
+  become: True
+  apt:
+    name: libyajl2
+    update_cache: yes
+    state: latest
+
+- name: "Rotate django logs"
+  become: True
+  template:
+    src: django_log.j2
+    dest: "/etc/logrotate.d/django_log"
+    owner: "root"
+    group: "root"
+    mode: "0644"

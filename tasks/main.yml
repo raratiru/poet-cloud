@@ -1,31 +1,34 @@
 ---
 - import_tasks: verify_variables.yml
-  tags: [never, compact, new_instance]
+  tags: [never, compact, new_instance, prepare_box]
 
 - import_tasks: verify_extra_variables.yml
-  tags: [never, compact]
+  tags: [never, compact, install_django]
 
 - import_tasks: new_instance.yml
   tags: [never, new_instance]
   when: ansible_ssh_user == "root"
 
 - import_tasks: monitoring.yml
-  tags: [never, compact]
+  tags: [never, compact, prepare_box]
 
 - import_tasks: os_prep.yml
-  tags: [never, compact]
+  tags: [never, compact, prepare_box]
 
 - import_tasks: sshd.yml
-  tags: [never, compact]
+  tags: [never, compact, prepare_box]
 
 - import_tasks: fail2ban.yml
-  tags: [never, compact]
+  tags: [never, compact, prepare_box]
 
 - import_tasks: iptables.yml
-  tags: [never, compact]
+  tags: [never, compact, prepare_box]
 
 - import_tasks: postgresql.yml
-  tags: [never, compact]
+  tags: [never, compact, install_postgres, install_django]
+
+- import_tasks: local_django.yml
+  tags: [never, compact, install_django]
 
 - import_tasks: nginx_hardened.yml
   tags: [never, compact, nginx_proxy]
@@ -34,7 +37,7 @@
   tags: [never, compact, nginx_proxy]
 
 - import_tasks: copy_scripts.yml
-  tags: [never, compact]
+  tags: [never, compact, install_django]
 
 - import_tasks: certbot.yml
   tags: [never, certbot]

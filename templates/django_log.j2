@@ -1,0 +1,7 @@
+{{ ansible_facts["user_dir"] }}/00_server/{{ lookup("env", "POET_CLOUD_SERVER_DOMAIN_NAME") }}/cellar/logs/* {
+    weekly
+    rotate 4
+    size 10M
+    compress
+    delaycompress
+}
