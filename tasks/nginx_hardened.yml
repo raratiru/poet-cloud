@@ -44,10 +44,19 @@
     - name: Update System
       apt:
         update_cache: yes
+    - name: Upgrade System
+      apt:
+        upgrade: full
     - name: Install Nginx
       apt:
         name: nginx
         state: present
+    - name: Update System
+      apt:
+        update_cache: yes
+    - name: Upgrade System
+      apt:
+        upgrade: full
 
 - name: "Create nginx site cache directory"
   become: True
