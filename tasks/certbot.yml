@@ -1,4 +1,4 @@
 ---
-- name: Install Certificate
+- name: Install Certificate for {{ domains }}
   become: True
   shell: "export PATH=$PATH:/sbin && /usr/bin/certbot --nginx -n --agree-tos --redirect --email {{ admin_email  }} -d {{ domains }}"
