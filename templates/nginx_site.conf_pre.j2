@@ -43,6 +43,7 @@ server {
     break;
   }
 
+  # If maintenance.html exists the server returns a 503
   if (-f $document_root/maintenance.html) {
     return 503;
   }
@@ -73,6 +74,13 @@ server {
     proxy_redirect off;
     proxy_buffering on;
     proxy_read_timeout 3600s;
+  }
+
+  # If maintenance.html exists the server returns a 503 (Look upper setting)
+  # If this files, exists redirect everything there.
+  error_page 503 @maintenance;
+  location @maintenance {
+    rewrite ^(.*)$ /maintenance.html break;
   }
 
   # redirect server error pages to the static page /50x.html

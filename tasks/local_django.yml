@@ -24,18 +24,6 @@
         try_files $uri $uri/ =404;
       }
 
-- name: "Nginx: Open custom maintenace page"
-  become: True
-  ansible.builtin.blockinfile:
-    path: "/etc/nginx/conf.d/{{ server_domain_name }}.conf"
-    insertbefore: "# redirect server error pages to"
-    block: |2
-      # Redirect everything to maintenance.html
-      error_page 503 @maintenance;
-      location @maintenance {
-        rewrite ^(.*)$ /maintenance.html break;
-      }
-
 - name: "Rotate django logs"
   become: True
   template:
