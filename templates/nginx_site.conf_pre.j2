@@ -53,7 +53,7 @@ server {
   }
 
   location / {
-    {%- if nginx_use_proxy_cache is defined and nginx_use_proxy_cache -%}
+    {% if nginx_use_proxy_cache is defined and nginx_use_proxy_cache -%}
     proxy_cache {{ server_domain_name }}_cache;
     proxy_cache_lock on;
     {%- if nginx_cache_background_update is defined and nginx_cache_background_update -%}
