@@ -28,6 +28,15 @@
   args:
     creates: '{{ ansible_facts["user_dir"] }}/00_server/{{ server_domain_name }}/.git/HEAD'
 
+- name: "Nginx: Change permissions and group of central server directory"
+  become: True
+  file:
+    path: '{{ ansible_facts["user_dir"] }}/00_server'
+    state: directory
+    owner: "{{ ansible_ssh_user }}"
+    group: nginx
+    mode: "0750"
+
 - name: "Nginx: Change permissions and group of the server directory"
   become: True
   file:
