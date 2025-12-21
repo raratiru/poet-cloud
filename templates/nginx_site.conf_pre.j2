@@ -2,7 +2,7 @@
 # Ansible managed
 #
 
-upstream frontend_servers {
+upstream {{ server_domain_name }}_frontend_servers {
   least_conn;
   zone frontend 64k;
   server 127.0.0.1:{{ nginx_proxy_server_port | default("8001") }} weight=1 fail_timeout=0s;
@@ -65,7 +65,7 @@ server {
     {% endif %}
     {% endif %}
     proxy_hide_header X-Powered-By;
-    proxy_pass http://frontend_servers;
+    proxy_pass http://{{ server_domain_name }}_frontend_servers;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header Host $http_host;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
