@@ -24,17 +24,17 @@
 - import_tasks: iptables.yml
   tags: [never, compact, prepare_box]
 
+- import_tasks: nginx_hardened.yml
+  tags: [never, compact, nginx_proxy, install_django]
+
+- import_tasks: nginx_compact.yml
+  tags: [never, compact, nginx_proxy, install_django]
+
 - import_tasks: postgresql.yml
   tags: [never, compact, install_postgres, install_django]
 
 - import_tasks: local_django.yml
   tags: [never, compact, install_django]
-
-- import_tasks: nginx_hardened.yml
-  tags: [never, compact, nginx_proxy]
-
-- import_tasks: nginx_compact.yml
-  tags: [never, compact, nginx_proxy]
 
 - import_tasks: copy_scripts.yml
   tags: [never, compact, install_django]
