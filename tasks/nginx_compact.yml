@@ -23,24 +23,6 @@
         mode: "0640",
       }
 
-- name: "Nginx: Open media directories"
-  become: True
-  ansible.builtin.blockinfile:
-    path: "/etc/nginx/conf.d/{{ server_domain_name }}.conf"
-    insertbefore: "  location / {"
-    block: |2
-      location /static {
-        try_files $uri $uri/ =404;
-        access_log off;
-        etag off;
-        if_modified_since off;
-        add_header Cache-Control "public, max-age=1800";
-        include /etc/nginx/conf.d/10.headers.conf;
-      }
-      location /media {
-        try_files $uri $uri/ =404;
-      }
-
 - name: "Nginx: Create html directory for this server"
   command: 'git init {{ ansible_facts["user_dir"] }}/00_server/{{ server_domain_name }}'
   args:

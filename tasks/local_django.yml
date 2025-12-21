@@ -6,6 +6,24 @@
     update_cache: yes
     state: latest
 
+- name: "Nginx: Open media directories"
+  become: True
+  ansible.builtin.blockinfile:
+    path: "/etc/nginx/conf.d/{{ server_domain_name }}.conf"
+    insertbefore: "  location / {"
+    block: |2
+      location /static {
+        try_files $uri $uri/ =404;
+        access_log off;
+        etag off;
+        if_modified_since off;
+        add_header Cache-Control "public, max-age=1800";
+        include /etc/nginx/conf.d/10.headers.conf;
+      }
+      location /media {
+        try_files $uri $uri/ =404;
+      }
+
 - name: "Rotate django logs"
   become: True
   template:

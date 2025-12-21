@@ -78,11 +78,11 @@
     nginx_limit_conn: default 20
     nginx_add_header: []
 
-- name: "Copy cache conf"
-  become: True
-  template:
-    src: 91.proxy_cache.j2
-    dest: /etc/nginx/conf.d/91.proxy_cache.conf
+- name: Add a line to a file if the file does not exist, without passing regexp
+  ansible.builtin.lineinfile:
+    path: /etc/nginx/conf.d/91.proxy_cache.conf
+    line: "proxy_cache_path /var/cache/nginx/{{ server_domain_name }} levels=1:2 keys_zone={{ server_domain_name }}_cache:{{ nginx_cache_keys_zone_size | default('10m') }} max_size={{ nginx_cache_max_size | default('20g') }} inactive={{ nginx_cache_inactive_time | default('180m') }} use_temp_path=off;"
+    create: yes
     owner: root
     group: root
     mode: "0600"
