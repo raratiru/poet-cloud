@@ -2,7 +2,7 @@
 - name: Create iptables directory
   become: yes
   file:
-    path: '/etc/iptables'
+    path: "/etc/iptables"
     state: directory
     owner: root
     group: root
@@ -84,3 +84,7 @@
   with_items:
     - "pre-firewall"
     - "firewall"
+
+- name: Reboot
+  become: True
+  ansible.builtin.reboot:
