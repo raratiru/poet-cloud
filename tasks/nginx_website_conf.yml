@@ -1,0 +1,87 @@
+---
+- name: "Nginx: Copy website configuration"
+  become: True
+  ansible.builtin.template:
+    src: "nginx_site.conf_pre.j2"
+    dest: "/etc/nginx/conf.d/{{ server_domain_name }}.conf"
+    owner: "root"
+    group: "root"
+    mode: "0640"
+    force: False
+
+- name: "Create nginx site cache directory"
+  become: True
+  file:
+    path: "/var/cache/nginx/{{ server_domain_name }}"
+    state: directory
+    owner: nginx
+    group: root
+    mode: "0700"
+
+- name: "Assert permissions of cache directory"
+  become: True
+  file:
+    path: "/var/cache/nginx"
+    state: directory
+    owner: nginx
+    group: root
+    mode: "0700"
+    recurse: True
+
+- name: Add cache policy for {{ server_domain_name }}
+  become: True
+  ansible.builtin.lineinfile:
+    path: /etc/nginx/conf.d/91.proxy_cache.conf
+    line: "proxy_cache_path /var/cache/nginx/{{ server_domain_name }} levels=1:2 keys_zone={{ server_domain_name }}_cache:{{ nginx_cache_keys_zone_size | default('10m') }} max_size={{ nginx_cache_max_size | default('20g') }} inactive={{ nginx_cache_inactive_time | default('180m') }} use_temp_path=off;"
+    create: yes
+    owner: root
+    group: root
+    mode: "0600"
+
+- name: "Nginx: Change permissions and group of home directory"
+  become: True
+  ansible.builtin.file:
+    path: "/home"
+    state: directory
+    owner: "{{ ansible_ssh_user }}"
+    group: nginx
+    mode: "0750"
+
+- name: 'Nginx: Change permissions and group of {{ ansible_facts["user_dir"] }} directory'
+  become: True
+  ansible.builtin.file:
+    path: '{{ ansible_facts["user_dir"] }}'
+    state: directory
+    owner: "{{ ansible_ssh_user }}"
+    group: nginx
+    mode: "0750"
+
+- name: "Nginx: Create or update the container of the server directory"
+  become: True
+  ansible.builtin.file:
+    path: '{{ ansible_facts["user_dir"] }}/00_server'
+    state: directory
+    owner: "{{ ansible_ssh_user }}"
+    group: nginx
+    mode: "0750"
+
+- name: "Nginx: Create or update the server directory"
+  become: True
+  ansible.builtin.file:
+    path: '{{ ansible_facts["user_dir"] }}/00_server/{{ server_domain_name }}'
+    state: directory
+    owner: "{{ ansible_ssh_user }}"
+    group: nginx
+    mode: "0750"
+
+- name: "Nginx: Initialize git"
+  command: 'git init {{ ansible_facts["user_dir"] }}/00_server/{{ server_domain_name }}'
+  args:
+    creates: '{{ ansible_facts["user_dir"] }}/00_server/{{ server_domain_name }}/.git/HEAD'
+
+- name: "Nginx: Initialize nginx"
+  become: True
+  service:
+    name: nginx
+    state: restarted
+    enabled: yes

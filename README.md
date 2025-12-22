@@ -43,7 +43,7 @@ Role to manage a cloud instance
       - `nginx_cache_background_update` [defined & boolean]
       - `nginx_cache_revalidate_with_conditional_headers` [defined & boolean]
       - `nginx_proxy_server_port` [default: 8001]
-      - nginx_compact:
+      - nginx_website_conf:
         - `POET_PROJECT` (Environment Variable)
         - `POET_CLOUD_SERVER_DOMAIN_NAME` (Environment Variable)
 

@@ -1,7 +1,7 @@
 ---
 - name: "Nginx: Install necessary dependencies"
   become: True
-  apt:
+  ansible.builtin.apt:
     name:
       [
         "curl",
@@ -13,16 +13,9 @@
       ]
     state: present
 
-# - name: "Nginx: Add the signing key, if not present"
-#   become: True
-#   apt_key:
-#     id: 573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62
-#     url: https://nginx.org/keys/nginx_signing.key
-#     state: present
-
 - name: "Nginx: Add the signing key, if not present"
   become: True
-  get_url:
+  ansible.builtin.get_url:
     url: "https://nginx.org/keys/nginx_signing.key"
     dest: "/etc/apt/trusted.gpg.d/nginx.asc"
     mode: "0644"
@@ -30,46 +23,37 @@
 
 - name: "Nginx: Add APT deb repository"
   become: True
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: "deb [arch=amd64] http://nginx.org/packages/debian/ {{ ansible_facts['distribution_release'] }} nginx"
 
 - name: "Nginx: Add APT deb-src repository"
   become: True
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: "deb-src [arch=amd64] http://nginx.org/packages/debian/ {{ ansible_facts['distribution_release'] }} nginx"
 
 - name: "Nginx: Update and Install Nginx"
   become: True
   block:
     - name: Update System
-      apt:
+      ansible.builtin.apt:
         update_cache: yes
     - name: Upgrade System
-      apt:
+      ansible.builtin.apt:
         upgrade: full
     - name: Install Nginx
-      apt:
+      ansible.builtin.apt:
         name: nginx
         state: present
     - name: Update System
-      apt:
+      ansible.builtin.apt:
         update_cache: yes
     - name: Upgrade System
-      apt:
+      ansible.builtin.apt:
         upgrade: full
-
-- name: "Create nginx site cache directory"
-  become: True
-  file:
-    path: "/var/cache/nginx/{{ server_domain_name }}"
-    state: directory
-    owner: nginx
-    group: root
-    mode: "0700"
 
 - name: copy 10.headers.conf
   become: True
-  copy:
+  ansible.builtin.copy:
     src: 10.headers.conf
     dest: /etc/nginx/conf.d/10.headers.conf
     owner: root
@@ -87,40 +71,40 @@
     nginx_limit_conn: default 20
     nginx_add_header: []
 
-- name: Add cache policy for {{ server_domain_name }}
-  become: True
-  ansible.builtin.lineinfile:
-    path: /etc/nginx/conf.d/91.proxy_cache.conf
-    line: "proxy_cache_path /var/cache/nginx/{{ server_domain_name }} levels=1:2 keys_zone={{ server_domain_name }}_cache:{{ nginx_cache_keys_zone_size | default('10m') }} max_size={{ nginx_cache_max_size | default('20g') }} inactive={{ nginx_cache_inactive_time | default('180m') }} use_temp_path=off;"
-    create: yes
-    owner: root
-    group: root
-    mode: "0600"
-
 - name: copy 70.gzip.conf
   become: True
-  copy:
+  ansible.builtin.copy:
     src: 70.gzip.conf
     dest: /etc/nginx/conf.d/70.gzip.conf
     owner: root
     group: root
     mode: "0600"
 
+- name: "Assert permissions of cache directory"
+  become: True
+  ansible.builtin.file:
+    path: "/var/cache/nginx"
+    state: directory
+    owner: nginx
+    group: root
+    mode: "0700"
+    recurse: True
+
 - name: "Nginx: Initialize nginx"
   become: True
-  service:
+  ansible.builtin.service:
     name: nginx
     state: restarted
     enabled: yes
 
 - name: "Nginx: Check if report script exists"
-  stat:
+  ansible.builtin.stat:
     path: /usr/local/bin/check_services
   register: nginx_services
 
 - name: "Nginx: Append services to report script"
   become: True
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: "/usr/local/bin/check_services"
     insertafter: "^# Add services"
     line: 'services+="{{ item }} "'

@@ -25,9 +25,9 @@
   tags: [never, compact, prepare_box]
 
 - import_tasks: nginx_hardened.yml
-  tags: [never, compact, nginx_proxy, install_django]
+  tags: [never, compact, nginx_proxy, install_django, prepare_box]
 
-- import_tasks: nginx_compact.yml
+- import_tasks: nginx_website_conf.yml
   tags: [never, compact, nginx_proxy, install_django]
 
 - import_tasks: postgresql.yml
