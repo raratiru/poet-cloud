@@ -18,14 +18,14 @@
 - import_tasks: sshd.yml
   tags: [never, compact, prepare_box]
 
+- import_tasks: nginx_hardened.yml
+  tags: [never, compact, nginx_proxy, install_django, prepare_box]
+
 - import_tasks: fail2ban.yml
   tags: [never, compact, prepare_box]
 
 - import_tasks: iptables.yml
   tags: [never, compact, prepare_box]
-
-- import_tasks: nginx_hardened.yml
-  tags: [never, compact, nginx_proxy, install_django, prepare_box]
 
 - import_tasks: nginx_website_conf.yml
   tags: [never, compact, nginx_proxy, install_django]
