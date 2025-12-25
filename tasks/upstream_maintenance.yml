@@ -71,6 +71,15 @@
     timeout: 800
     state: absent
 
+- name: "Change permissions and group of the server directory"
+  become: True
+  ansible.builtin.file:
+    path: '{{ ansible_facts["user_dir"] }}/00_server/{{ server_domain_name }}'
+    state: directory
+    owner: "{{ ansible_ssh_user }}"
+    group: nginx
+    recurse: True
+
 - name: "Stop Maintenance Mode"
   shell:
     cmd: '{{ ansible_facts["user_dir"] }}/.local/bin/stop_maintenance'
