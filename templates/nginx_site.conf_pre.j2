@@ -65,7 +65,6 @@ server {
     proxy_cache_revalidate on;
     {% endif -%}
     {% endif -%}
-    proxy_buffering  on;
     proxy_buffer_size 16k;
     proxy_busy_buffers_size 24k; # essentially, proxy_buffer_size + 2 small buffers of 4k
     proxy_buffers 384 4k;
