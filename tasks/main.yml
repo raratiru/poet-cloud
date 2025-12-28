@@ -34,7 +34,7 @@
   tags: [never, compact, install_postgres, install_django]
 
 - import_tasks: local_django.yml
-  tags: [never, compact, install_django]
+  tags: [never, compact, install_django, local_django]
 
 - import_tasks: copy_scripts.yml
   tags: [never, compact, install_django]
