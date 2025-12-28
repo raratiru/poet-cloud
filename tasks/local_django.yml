@@ -32,3 +32,10 @@
     owner: "root"
     group: "root"
     mode: "0644"
+
+- name: "Nginx: Restart nginx"
+  become: True
+  ansible.builtin.service:
+    name: nginx
+    state: restarted
+    enabled: yes
