@@ -6,7 +6,20 @@
     regexp: '^(even_deny_root)'
     line: '# \1'
     backrefs: yes
-    state: present
+    state:
+
+- name: Use ipv4 by default for goodness shake!
+  become: True
+  ansible.builtin.lineinfile:
+    dest: /etc/gai.conf
+    line: "precedence ::ffff:0:0/96  100"
+
+# - name: Use proper name servers for goodness shake!
+#   become: true
+#   ansible.builtin.lineinfile:
+#     dest:
+# Good luck:
+# https://oneuptime.com/blog/post/2026-02-21-how-to-use-ansible-to-manage-systemd-resolved/view
 
 - name: "Install bare metal necessary packages"
   apt:
