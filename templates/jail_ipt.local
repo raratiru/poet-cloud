@@ -5,8 +5,8 @@ findtime=3600
 maxretry = 3
 usedns = no
 ignoreip = 127.0.0.1/8 ::1 {{ ansible_facts.default_ipv4.address }} {% if 'address' in ansible_facts.default_ipv6 %}{{ ansible_facts.default_ipv6.address }}{% endif %}
-banaction = iptables-multiport
-banaction_allports = iptables-allports
+banaction = iptables-multiport[blocktype=DROP]
+banaction_allports = iptables-allports[blocktype=DROP]
 
 [ssh]
 enabled = true
