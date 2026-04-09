@@ -8,7 +8,7 @@ Role to manage a cloud instance
 
 ### Default variables
 
-- `ansible_ssh_user` - default: `{{ managing_user }}`
+- `ansible_user` - default: `{{ managing_user }}`
 - `email_sender` - default: `{{ admin_email }}`
 
 ### Necessary variables

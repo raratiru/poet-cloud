@@ -24,7 +24,7 @@ export PGPASSWORD="$POET_DJANGO_DATABASE_MAIN_PASSWORD" && {
 
 # Tidy the new file
 rm -f "$POET_PROJECT_PATH"/cellar/backup/database/"$filename".dump
-chown {{ ansible_ssh_user }}:{{ ansible_ssh_user }} \
+chown {{ ansible_user }}:{{ ansible_user }} \
     "$POET_PROJECT_PATH"/cellar/backup/database/"$filename".dump.tar.gz
 chmod 600 "$POET_PROJECT_PATH"/cellar/backup/database/"$filename".dump.tar.gz
 

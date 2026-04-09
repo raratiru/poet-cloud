@@ -7,16 +7,16 @@
   unarchive:
     src: "{{ lookup('env', 'HOME') }}/.local/bin/poet.tar.gz"
     dest: '{{ ansible_facts["user_dir"] }}/.local/bin/'
-    owner: "{{ ansible_ssh_user }}"
-    group: "{{ ansible_ssh_user }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     mode: 0700
 
 - name: "Copy .env to production"
   copy:
     src: "{{ lookup('env', 'ANSIBLE_DOTENV_FILE_PATH') }}"
     dest: "{{ lookup('env', 'POET_PROJECT_PATH') }}/.env"
-    owner: "{{ ansible_ssh_user }}"
-    group: "{{ ansible_ssh_user }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     mode: 0400
 
 - name: Touch the cue file

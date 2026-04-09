@@ -4,7 +4,7 @@ DIFF=$(/usr/bin/diff /var/log/chkrootkit/log.today /var/log/chkrootkit/log.expec
 
 [ -n "$DIFF" ] && {
   echo -e "Subject:Chkrootkit Alert\n\n$DIFF" \
-    | /usr/sbin/sendmail -F "Charlie Root {{ ansible_ssh_user }}" {{ admin_email }}
+    | /usr/sbin/sendmail -F "Charlie Root {{ ansible_user }}" {{ admin_email }}
 }
 
 /usr/bin/cp -af /var/log/chkrootkit/log.today /var/log/chkrootkit/log.expected

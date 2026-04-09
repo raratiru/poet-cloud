@@ -58,7 +58,7 @@
   synchronize:
     src: "/root/.ssh/"
     dest: "/home/{{ managing_user }}/.ssh/"
-  when: ansible_ssh_user == 'root'
+  when: ansible_user == 'root'
 
 - name: Enable pam su authentication
   become: True
